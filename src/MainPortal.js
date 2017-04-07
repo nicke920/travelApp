@@ -10,68 +10,12 @@ const AddTripForm = (props) => {
 				<input type="text" name="tripName" onChange={props.handleChange} placeholder="Trip"/>
 				<label htmlFor="">Budget</label>
 				<input type="number" name="tripBudget" onChange={props.handleChange} placeholder="budget"/>
-				<select name="tripCurrency" onChange={props.handleChange}>
-					<option value="USD">USD</option>
-					<option value="CAD">CAD</option>
-				</select>
 				<textarea name="tripNotes" value={props.thisValue} onChange={props.handleChange} cols="20" rows="2"></textarea>
 				<button>Submit</button>
 			</form>
 		</div>
 	)
 }
-
-const AddExpense = (props) => {
-	return (
-		<div className="overlay" ref={props.reference}>
-			<form className="secondform" onSubmit={props.addExpense}>
-				<i className="fa fa-times-circle" aria-hidden="true" onClick={props.exit}></i>
-				<select value={props.getValue} name="expenseCurrency" onChange={props.handleChange}>
-					<option defaultValue="USD" value="USD">USD</option>
-					<option defaultValue="CAD" value="CAD">CAD</option>
-				</select>
-				<label htmlFor="expenseAmount">Amount</label>
-				<input type="number" name="expenseAmount" placeholder="Amount" onChange={props.handleChange}/>
-				<label htmlFor="expenseName">Name</label>
-				<input type="text" name="expenseName" placeholder="Title" onChange={props.handleChange}/>
-				<button>Submit it</button>
-			</form>
-		</div>
-	)
-}
-
-
-
-
-const TheTrip = (props) => {
-
-		return (
-			<section className="tripsSection wrapper" ref={props.reference}>
-				<article className="tripsContainer">
-					<div className="tripsHeader">
-						<h1>{props.uniqueName}</h1>
-						<p>{props.uniqueBudget}</p>
-						<p>{props.uniqueCurrency}</p>
-						<p>{props.uniqueNotes}</p>
-						<button className="btn" onClick={props.open}>Add an Expense</button>
-						<button className="btn" onClick={props.back}>Go Back</button>
-					</div>
-					
-					{props.expenseArray.map((uniqueExpense) => {
-						return (
-							<div className="tripList">
-								<h3>{uniqueExpense.expenseName}</h3>
-								<p>{uniqueExpense.expenseCurrency}</p>
-								<p>{uniqueExpense.expenseAmount}</p>
-							</div>
-						)
-					})}
-				</article>
-			</section>
-		)
-
-}
-
 
 export default class MainPortal extends React.Component {
 	constructor() {
@@ -84,49 +28,51 @@ export default class MainPortal extends React.Component {
 			tripCurrency: '',
 			tripNotes: '',
 			tripShow: '',
-
-			theTripPortal: '',
-			//used to show data when the trip is clicked through
-			uniqueTripName: '',
-			uniqueTripBudget: '',
-			uniqueTripNotes: '',
-			uniqueTripCurrency: '',
-			expenseCurrency: '',
-			expenseAmount: '',
+			expenseShow: '',
+			theTripPortal: true,
+			activeTrip:'',
+			expensesArray: [],
 			expenseName: '',
-			unqiueExpenseArray: [],
-			addExpenseShow: ''
+			expenseAmount: '',
+			expenseType: ''
 		}
 		this.handleChange = this.handleChange.bind(this);
 		this.showTravelList = this.showTravelList.bind(this);
-		this.addTrip = this.addTrip.bind(this);
-		this.addExpense = this.addExpense.bind(this);
 		this.exitForm = this.exitForm.bind(this);
-		this.openAddExpense = this.openAddExpense.bind(this);
 		this.goBack = this.goBack.bind(this);
+		this.addTrip = this.addTrip.bind(this);
+		this.removeTrip = this.removeTrip.bind(this);
+		this.showExpenseForm = this.showExpenseForm.bind(this);
+		this.exitExpenseForm = this.exitExpenseForm.bind(this);
+		this.addAnExpense = this.addAnExpense.bind(this);
+		this.removeExpense = this.removeExpense.bind(this);
 	}
-	
+	//to capture the input text fields
 	handleChange(e) {
 		this.setState({
 			[e.target.name]: e.target.value
 		})
 	}
+	//to show an overlay form for trips portal
 	showTravelList() {
 		this.setState({
 			tripShow: true
 		})
-		console.log('clicked')
 	}
+	//to exit and overlay form for trips portal
 	exitForm() {
 		this.setState({
 			tripShow: false
 		})
 	}
+	//to go back to the main trip portal
 	goBack() {
 		this.setState({
-			theTripPortal: true
+			theTripPortal: true,
+			activeTrip: ''
 		})
 	}
+	//to add a trip to the list
 	addTrip(e) {
 		e.preventDefault();
 		const tripDuplicate = this.state.tripsArray.slice();
@@ -146,8 +92,8 @@ export default class MainPortal extends React.Component {
 			tripShow: false
 		})
 	}
-	removeTripList(i) {
-		console.log('whati', i)
+	//to remove a trip from the list
+	removeTrip(i) {
 		const tripDuplicate = this.state.tripsArray.slice();
 		const indexToDelete = i;
 		tripDuplicate.splice(i, 1);
@@ -155,42 +101,53 @@ export default class MainPortal extends React.Component {
 			tripsArray: tripDuplicate
 		})
 	}
-	enterTripList(e) {
-		console.log('clicked', e);
-		//setting unique... means we pass what was enterd in the form to the other screen
+	//to enter the individual trip
+	enterTrip(trip, i) {
+		const trippy = this.state.tripsArray[i];
+		console.log('wheoooooo', trippy);
 		this.setState({
-			uniqueTripName: e.tripName,
-			uniqueTripBudget: e.tripBudget,
-			uniqueTripNotes: e.tripNotes,
-			uniqueTripCurrency: e.tripCurrency,
-			theTripPortal: true
+			theTripPortal: false,
+			activeTrip: trippy
 		})
 	}
-	
-	addExpense(e) {
+	//to show the add an expense form
+	showExpenseForm() {
+		// console.log('guccii');
+		this.setState({
+			expenseShow: true
+		})
+	}
+	//to exit the expense form
+	exitExpenseForm() {
+		this.setState({
+			expenseShow: false
+		})
+	}
+	addAnExpense(e) {
 		e.preventDefault();
-		console.log('yeee');
 		const expenseDetails = {
 			expenseName: this.state.expenseName,
 			expenseAmount: this.state.expenseAmount,
-			expenseCurrency: this.state.expenseCurrency
+			expenseType: this.state.expenseType
 		}
-		this.state.unqiueExpenseArray.push(expenseDetails);
-		this.uniqueTripBudget = this.state.uniqueTripBudget - this.state.expenseAmount;
+		const expensesArrayDuplicate = this.state.expensesArray.slice();
+		expensesArrayDuplicate.push(expenseDetails);
 		this.setState({
-			expenseCurrency: '',
-			expenseAmount: '',
+			expensesArray: expensesArrayDuplicate,
 			expenseName: '',
-			uniqueTripBudget: this.uniqueTripBudget,
-			addExpenseShow: false
+			expenseAmount: '',
+			expenseType: '',
+			expenseShow: false
 		})
-		console.log(this.state.unqiueExpenseArray)
+		// console.log('gucci', this.state.expensesArray);
 	}
-	openAddExpense() {
+	removeExpense(i) {
+		const expensesArrayDuplicate = this.state.expensesArray;
+		const indexToDelete = i;
+		expensesArrayDuplicate.splice(i, 1);
 		this.setState({
-			addExpenseShow: true
+			expensesArray: expensesArrayDuplicate
 		})
-		console.log('clicked');
 	}
 	render() {
 		//when user clicks add a trip... on click, it sets tripShow state to true, and when it's true, we show tripForm
@@ -202,53 +159,94 @@ export default class MainPortal extends React.Component {
 			)
 		}
 
-		//ADD AN EXPENSE FORM
-		let addExpenseForm = '';
-		if (this.state.addExpenseShow == true) {
-			addExpenseForm = (
-				<AddExpense addExpense={this.addExpense} getValue={this.state.value} handleChange={this.handleChange} reference={ref => this.showTripForm = ref} exit={this.exitForm} />
+		//the add an expense form
+		let expenseForm = '';
+		if (this.state.expenseShow == true) {
+			expenseForm = (
+				<div className="overlay">
+					<form className="secondform" onSubmit={this.addAnExpense}>
+						<i className="fa fa-times-circle" aria-hidden="true" onClick={this.exitExpenseForm}></i>
+						<label htmlFor="expenseAmount">Amount</label>
+						<input type="number" name="expenseAmount" placeholder="Amount" onChange={this.handleChange}/>
+						<label htmlFor="expenseName">Name</label>
+						<input type="text" name="expenseName" placeholder="Title" onChange={this.handleChange}/>
+						<label htmlFor="expenseType">Type</label>
+						<select name="expenseAmount">
+							<option value="accomodation">Accomodation</option>
+							<option value="food">Food</option>
+							<option value="fun">Fun</option>
+						</select>
+						<button>Submit it</button>
+					</form>
+				</div>
 			)
 		}
 
 		let theTripPortal = '';
+		//main trip list portal
 		if (this.state.theTripPortal == true) {
 			theTripPortal = (
-					<TheTrip reference={ref => this.uniqueTrip = ref} open={this.openAddExpense} uniqueName={this.state.uniqueTripName} uniqueBudget={this.state.uniqueTripBudget} uniqueCurrnecy={this.state.uniqueTripCurrency} uniqueNotes={this.state.uniqueTripNotes} expenseArray={this.state.unqiueExpenseArray} back={this.goBack} />
-				)
-		}
-		if (this.state.theTripPortal == false) {
-			theTripPortal = (
-				<section className="tripsSection wrapper" ref={ref => this.tripList = ref}>
+				<section className="tripsSection wrapper">
 					<article className="tripsContainer">
 						<div className="tripsHeader">
 							<h2>Trips</h2>
 							<button className="btn" onClick={this.showTravelList}>Add a trip</button>
 						</div>
-							{this.state.tripsArray.map((trip, i) => {
-								return (
-									<div className="tripList">
-										<div className="eachTrip">
-											<h3>{trip.tripName}</h3>
-											<p>{trip.tripCurrency}</p>
-											<p>{trip.tripBudget}</p>
-											<p className="notes">{trip.tripNotes}</p>
-										</div>
-										<div className="eachAction">
-											<i className="fa fa-sign-in" aria-hidden="true" onClick={() => this.enterTripList(trip)}></i>
-											<i className="fa fa-trash-o" aria-hidden="true" onClick={() => this.removeTripList(i)}></i>
-										</div>
+						{this.state.tripsArray.map((trip, i) => {
+							return (
+								<div className="tripList">
+									<div className="eachTrip">
+										<h3>{trip.tripName}</h3>
+										<p>{trip.tripCurrency}</p>
+										<p>{trip.tripBudget}</p>
+										<p className="notes">{trip.tripNotes}</p>
 									</div>
-								)
-							})}
+									<div className="eachAction">
+										<i className="fa fa-sign-in" aria-hidden="true" onClick={() => this.enterTrip(trip, i)}></i>
+										<i className="fa fa-trash-o" aria-hidden="true" onClick={() => this.removeTrip(i)}></i>
+									</div>
+								</div>
+							)
+						})}
+					</article>
+				</section>
+			)
+		}
+		//inside the individual trip
+		if (this.state.theTripPortal == false) {
+			theTripPortal = (
+				<section className="tripsSection wrapper">
+					<article>
+						<div className="tripsHeader">
+							<h2>{this.state.activeTrip.tripName}</h2>
+							<button className="btn" onClick={this.showExpenseForm}>Add an expense</button>
+							<button className="btn" onClick={this.goBack}>Go back</button>
+						</div>
+						{this.state.expensesArray.map((expense, i) => {
+							return (
+								<div className="tripList">
+									<div className="eachTrip">
+									<h3>{expense.expenseName}</h3>
+									<p>{expense.expenseAmount}</p>
+									<p>{expense.expenseType}</p>
+									</div>
+									<div className="eachAction">
+										<i className="fa fa-trash-o" aria-hidden="true" onClick={() => this.removeExpense(i)}></i>
+									</div>
+								</div>
+							)
+
+						})}
 					</article>
 				</section>
 			)
 		}
 
+
 		return (
 			<div>
 				{tripForm}
-				{addExpenseForm}
+				{expenseForm}
 				<header className="heroImage">
 					<nav className="wrapper">
 						<h2 className="logo">TripPlanner</h2>

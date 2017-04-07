@@ -35634,136 +35634,12 @@ var AddTripForm = function AddTripForm(props) {
 				'Budget'
 			),
 			_react2.default.createElement('input', { type: 'number', name: 'tripBudget', onChange: props.handleChange, placeholder: 'budget' }),
-			_react2.default.createElement(
-				'select',
-				{ name: 'tripCurrency', onChange: props.handleChange },
-				_react2.default.createElement(
-					'option',
-					{ value: 'USD' },
-					'USD'
-				),
-				_react2.default.createElement(
-					'option',
-					{ value: 'CAD' },
-					'CAD'
-				)
-			),
 			_react2.default.createElement('textarea', { name: 'tripNotes', value: props.thisValue, onChange: props.handleChange, cols: '20', rows: '2' }),
 			_react2.default.createElement(
 				'button',
 				null,
 				'Submit'
 			)
-		)
-	);
-};
-
-var AddExpense = function AddExpense(props) {
-	return _react2.default.createElement(
-		'div',
-		{ className: 'overlay', ref: props.reference },
-		_react2.default.createElement(
-			'form',
-			{ className: 'secondform', onSubmit: props.addExpense },
-			_react2.default.createElement('i', { className: 'fa fa-times-circle', 'aria-hidden': 'true', onClick: props.exit }),
-			_react2.default.createElement(
-				'select',
-				{ value: props.getValue, name: 'expenseCurrency', onChange: props.handleChange },
-				_react2.default.createElement(
-					'option',
-					{ defaultValue: 'USD', value: 'USD' },
-					'USD'
-				),
-				_react2.default.createElement(
-					'option',
-					{ defaultValue: 'CAD', value: 'CAD' },
-					'CAD'
-				)
-			),
-			_react2.default.createElement(
-				'label',
-				{ htmlFor: 'expenseAmount' },
-				'Amount'
-			),
-			_react2.default.createElement('input', { type: 'number', name: 'expenseAmount', placeholder: 'Amount', onChange: props.handleChange }),
-			_react2.default.createElement(
-				'label',
-				{ htmlFor: 'expenseName' },
-				'Name'
-			),
-			_react2.default.createElement('input', { type: 'text', name: 'expenseName', placeholder: 'Title', onChange: props.handleChange }),
-			_react2.default.createElement(
-				'button',
-				null,
-				'Submit it'
-			)
-		)
-	);
-};
-
-var TheTrip = function TheTrip(props) {
-
-	return _react2.default.createElement(
-		'section',
-		{ className: 'tripsSection wrapper', ref: props.reference },
-		_react2.default.createElement(
-			'article',
-			{ className: 'tripsContainer' },
-			_react2.default.createElement(
-				'div',
-				{ className: 'tripsHeader' },
-				_react2.default.createElement(
-					'h1',
-					null,
-					props.uniqueName
-				),
-				_react2.default.createElement(
-					'p',
-					null,
-					props.uniqueBudget
-				),
-				_react2.default.createElement(
-					'p',
-					null,
-					props.uniqueCurrency
-				),
-				_react2.default.createElement(
-					'p',
-					null,
-					props.uniqueNotes
-				),
-				_react2.default.createElement(
-					'button',
-					{ className: 'btn', onClick: props.open },
-					'Add an Expense'
-				),
-				_react2.default.createElement(
-					'button',
-					{ className: 'btn', onClick: props.back },
-					'Go Back'
-				)
-			),
-			props.expenseArray.map(function (uniqueExpense) {
-				return _react2.default.createElement(
-					'div',
-					{ className: 'tripList' },
-					_react2.default.createElement(
-						'h3',
-						null,
-						uniqueExpense.expenseName
-					),
-					_react2.default.createElement(
-						'p',
-						null,
-						uniqueExpense.expenseCurrency
-					),
-					_react2.default.createElement(
-						'p',
-						null,
-						uniqueExpense.expenseAmount
-					)
-				);
-			})
 		)
 	);
 };
@@ -35784,42 +35660,45 @@ var MainPortal = function (_React$Component) {
 			tripCurrency: '',
 			tripNotes: '',
 			tripShow: '',
-
-			theTripPortal: '',
-			//used to show data when the trip is clicked through
-			uniqueTripName: '',
-			uniqueTripBudget: '',
-			uniqueTripNotes: '',
-			uniqueTripCurrency: '',
-			expenseCurrency: '',
-			expenseAmount: '',
+			expenseShow: '',
+			theTripPortal: true,
+			activeTrip: '',
+			expensesArray: [],
 			expenseName: '',
-			unqiueExpenseArray: [],
-			addExpenseShow: ''
+			expenseAmount: '',
+			expenseType: ''
 		};
 		_this.handleChange = _this.handleChange.bind(_this);
 		_this.showTravelList = _this.showTravelList.bind(_this);
-		_this.addTrip = _this.addTrip.bind(_this);
-		_this.addExpense = _this.addExpense.bind(_this);
 		_this.exitForm = _this.exitForm.bind(_this);
-		_this.openAddExpense = _this.openAddExpense.bind(_this);
 		_this.goBack = _this.goBack.bind(_this);
+		_this.addTrip = _this.addTrip.bind(_this);
+		_this.removeTrip = _this.removeTrip.bind(_this);
+		_this.showExpenseForm = _this.showExpenseForm.bind(_this);
+		_this.exitExpenseForm = _this.exitExpenseForm.bind(_this);
+		_this.addAnExpense = _this.addAnExpense.bind(_this);
+		_this.removeExpense = _this.removeExpense.bind(_this);
 		return _this;
 	}
+	//to capture the input text fields
+
 
 	_createClass(MainPortal, [{
 		key: 'handleChange',
 		value: function handleChange(e) {
 			this.setState(_defineProperty({}, e.target.name, e.target.value));
 		}
+		//to show an overlay form for trips portal
+
 	}, {
 		key: 'showTravelList',
 		value: function showTravelList() {
 			this.setState({
 				tripShow: true
 			});
-			console.log('clicked');
 		}
+		//to exit and overlay form for trips portal
+
 	}, {
 		key: 'exitForm',
 		value: function exitForm() {
@@ -35827,13 +35706,18 @@ var MainPortal = function (_React$Component) {
 				tripShow: false
 			});
 		}
+		//to go back to the main trip portal
+
 	}, {
 		key: 'goBack',
 		value: function goBack() {
 			this.setState({
-				theTripPortal: true
+				theTripPortal: true,
+				activeTrip: ''
 			});
 		}
+		//to add a trip to the list
+
 	}, {
 		key: 'addTrip',
 		value: function addTrip(e) {
@@ -35855,10 +35739,11 @@ var MainPortal = function (_React$Component) {
 				tripShow: false
 			});
 		}
+		//to remove a trip from the list
+
 	}, {
-		key: 'removeTripList',
-		value: function removeTripList(i) {
-			console.log('whati', i);
+		key: 'removeTrip',
+		value: function removeTrip(i) {
 			var tripDuplicate = this.state.tripsArray.slice();
 			var indexToDelete = i;
 			tripDuplicate.splice(i, 1);
@@ -35866,47 +35751,66 @@ var MainPortal = function (_React$Component) {
 				tripsArray: tripDuplicate
 			});
 		}
+		//to enter the individual trip
+
 	}, {
-		key: 'enterTripList',
-		value: function enterTripList(e) {
-			console.log('clicked', e);
-			//setting unique... means we pass what was enterd in the form to the other screen
+		key: 'enterTrip',
+		value: function enterTrip(trip, i) {
+			var trippy = this.state.tripsArray[i];
+			console.log('wheoooooo', trippy);
 			this.setState({
-				uniqueTripName: e.tripName,
-				uniqueTripBudget: e.tripBudget,
-				uniqueTripNotes: e.tripNotes,
-				uniqueTripCurrency: e.tripCurrency,
-				theTripPortal: true
+				theTripPortal: false,
+				activeTrip: trippy
+			});
+		}
+		//to show the add an expense form
+
+	}, {
+		key: 'showExpenseForm',
+		value: function showExpenseForm() {
+			// console.log('guccii');
+			this.setState({
+				expenseShow: true
+			});
+		}
+		//to exit the expense form
+
+	}, {
+		key: 'exitExpenseForm',
+		value: function exitExpenseForm() {
+			this.setState({
+				expenseShow: false
 			});
 		}
 	}, {
-		key: 'addExpense',
-		value: function addExpense(e) {
+		key: 'addAnExpense',
+		value: function addAnExpense(e) {
 			e.preventDefault();
-			console.log('yeee');
 			var expenseDetails = {
 				expenseName: this.state.expenseName,
 				expenseAmount: this.state.expenseAmount,
-				expenseCurrency: this.state.expenseCurrency
+				expenseType: this.state.expenseType
 			};
-			this.state.unqiueExpenseArray.push(expenseDetails);
-			this.uniqueTripBudget = this.state.uniqueTripBudget - this.state.expenseAmount;
+			var expensesArrayDuplicate = this.state.expensesArray.slice();
+			expensesArrayDuplicate.push(expenseDetails);
 			this.setState({
-				expenseCurrency: '',
-				expenseAmount: '',
+				expensesArray: expensesArrayDuplicate,
 				expenseName: '',
-				uniqueTripBudget: this.uniqueTripBudget,
-				addExpenseShow: false
+				expenseAmount: '',
+				expenseType: '',
+				expenseShow: false
 			});
-			console.log(this.state.unqiueExpenseArray);
+			// console.log('gucci', this.state.expensesArray);
 		}
 	}, {
-		key: 'openAddExpense',
-		value: function openAddExpense() {
+		key: 'removeExpense',
+		value: function removeExpense(i) {
+			var expensesArrayDuplicate = this.state.expensesArray;
+			var indexToDelete = i;
+			expensesArrayDuplicate.splice(i, 1);
 			this.setState({
-				addExpenseShow: true
+				expensesArray: expensesArrayDuplicate
 			});
-			console.log('clicked');
 		}
 	}, {
 		key: 'render',
@@ -35922,26 +35826,67 @@ var MainPortal = function (_React$Component) {
 					}, exit: this.exitForm });
 			}
 
-			//ADD AN EXPENSE FORM
-			var addExpenseForm = '';
-			if (this.state.addExpenseShow == true) {
-				addExpenseForm = _react2.default.createElement(AddExpense, { addExpense: this.addExpense, getValue: this.state.value, handleChange: this.handleChange, reference: function reference(ref) {
-						return _this2.showTripForm = ref;
-					}, exit: this.exitForm });
+			//the add an expense form
+			var expenseForm = '';
+			if (this.state.expenseShow == true) {
+				expenseForm = _react2.default.createElement(
+					'div',
+					{ className: 'overlay' },
+					_react2.default.createElement(
+						'form',
+						{ className: 'secondform', onSubmit: this.addAnExpense },
+						_react2.default.createElement('i', { className: 'fa fa-times-circle', 'aria-hidden': 'true', onClick: this.exitExpenseForm }),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'expenseAmount' },
+							'Amount'
+						),
+						_react2.default.createElement('input', { type: 'number', name: 'expenseAmount', placeholder: 'Amount', onChange: this.handleChange }),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'expenseName' },
+							'Name'
+						),
+						_react2.default.createElement('input', { type: 'text', name: 'expenseName', placeholder: 'Title', onChange: this.handleChange }),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'expenseType' },
+							'Type'
+						),
+						_react2.default.createElement(
+							'select',
+							{ name: 'expenseAmount' },
+							_react2.default.createElement(
+								'option',
+								{ value: 'accomodation' },
+								'Accomodation'
+							),
+							_react2.default.createElement(
+								'option',
+								{ value: 'food' },
+								'Food'
+							),
+							_react2.default.createElement(
+								'option',
+								{ value: 'fun' },
+								'Fun'
+							)
+						),
+						_react2.default.createElement(
+							'button',
+							null,
+							'Submit it'
+						)
+					)
+				);
 			}
 
 			var theTripPortal = '';
+			//main trip list portal
 			if (this.state.theTripPortal == true) {
-				theTripPortal = _react2.default.createElement(TheTrip, { reference: function reference(ref) {
-						return _this2.uniqueTrip = ref;
-					}, open: this.openAddExpense, uniqueName: this.state.uniqueTripName, uniqueBudget: this.state.uniqueTripBudget, uniqueCurrnecy: this.state.uniqueTripCurrency, uniqueNotes: this.state.uniqueTripNotes, expenseArray: this.state.unqiueExpenseArray, back: this.goBack });
-			}
-			if (this.state.theTripPortal == false) {
 				theTripPortal = _react2.default.createElement(
 					'section',
-					{ className: 'tripsSection wrapper', ref: function ref(_ref) {
-							return _this2.tripList = _ref;
-						} },
+					{ className: 'tripsSection wrapper' },
 					_react2.default.createElement(
 						'article',
 						{ className: 'tripsContainer' },
@@ -35991,10 +35936,72 @@ var MainPortal = function (_React$Component) {
 									'div',
 									{ className: 'eachAction' },
 									_react2.default.createElement('i', { className: 'fa fa-sign-in', 'aria-hidden': 'true', onClick: function onClick() {
-											return _this2.enterTripList(trip);
+											return _this2.enterTrip(trip, i);
 										} }),
 									_react2.default.createElement('i', { className: 'fa fa-trash-o', 'aria-hidden': 'true', onClick: function onClick() {
-											return _this2.removeTripList(i);
+											return _this2.removeTrip(i);
+										} })
+								)
+							);
+						})
+					)
+				);
+			}
+			//inside the individual trip
+			if (this.state.theTripPortal == false) {
+				theTripPortal = _react2.default.createElement(
+					'section',
+					{ className: 'tripsSection wrapper' },
+					_react2.default.createElement(
+						'article',
+						null,
+						_react2.default.createElement(
+							'div',
+							{ className: 'tripsHeader' },
+							_react2.default.createElement(
+								'h2',
+								null,
+								this.state.activeTrip.tripName
+							),
+							_react2.default.createElement(
+								'button',
+								{ className: 'btn', onClick: this.showExpenseForm },
+								'Add an expense'
+							),
+							_react2.default.createElement(
+								'button',
+								{ className: 'btn', onClick: this.goBack },
+								'Go back'
+							)
+						),
+						this.state.expensesArray.map(function (expense, i) {
+							return _react2.default.createElement(
+								'div',
+								{ className: 'tripList' },
+								_react2.default.createElement(
+									'div',
+									{ className: 'eachTrip' },
+									_react2.default.createElement(
+										'h3',
+										null,
+										expense.expenseName
+									),
+									_react2.default.createElement(
+										'p',
+										null,
+										expense.expenseAmount
+									),
+									_react2.default.createElement(
+										'p',
+										null,
+										expense.expenseType
+									)
+								),
+								_react2.default.createElement(
+									'div',
+									{ className: 'eachAction' },
+									_react2.default.createElement('i', { className: 'fa fa-trash-o', 'aria-hidden': 'true', onClick: function onClick() {
+											return _this2.removeExpense(i);
 										} })
 								)
 							);
@@ -36007,7 +36014,7 @@ var MainPortal = function (_React$Component) {
 				'div',
 				null,
 				tripForm,
-				addExpenseForm,
+				expenseForm,
 				_react2.default.createElement(
 					'header',
 					{ className: 'heroImage' },
