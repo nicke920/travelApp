@@ -35705,57 +35705,66 @@ var TheTrip = function TheTrip(props) {
 
 	return _react2.default.createElement(
 		'section',
-		{ className: 'uniqueTripContainer', ref: props.reference },
+		{ className: 'tripsSection wrapper', ref: props.reference },
 		_react2.default.createElement(
-			'button',
-			{ onClick: props.open },
-			'Add an Expense'
-		),
-		_react2.default.createElement(
-			'div',
-			{ className: 'uniqueTripDetails' },
+			'article',
+			{ className: 'tripsContainer' },
 			_react2.default.createElement(
-				'h1',
-				null,
-				props.uniqueName
-			),
-			_react2.default.createElement(
-				'p',
-				null,
-				props.uniqueBudget
-			),
-			_react2.default.createElement(
-				'p',
-				null,
-				props.uniqueCurrency
-			),
-			_react2.default.createElement(
-				'p',
-				null,
-				props.uniqueNotes
-			)
-		),
-		props.expenseArray.map(function (uniqueExpense) {
-			return _react2.default.createElement(
 				'div',
-				{ className: 'expenseList' },
+				{ className: 'tripsHeader' },
 				_react2.default.createElement(
-					'h3',
+					'h1',
 					null,
-					uniqueExpense.expenseName
+					props.uniqueName
 				),
 				_react2.default.createElement(
 					'p',
 					null,
-					uniqueExpense.expenseCurrency
+					props.uniqueBudget
 				),
 				_react2.default.createElement(
 					'p',
 					null,
-					uniqueExpense.expenseAmount
+					props.uniqueCurrency
+				),
+				_react2.default.createElement(
+					'p',
+					null,
+					props.uniqueNotes
+				),
+				_react2.default.createElement(
+					'button',
+					{ className: 'btn', onClick: props.open },
+					'Add an Expense'
+				),
+				_react2.default.createElement(
+					'button',
+					{ className: 'btn', onClick: props.back },
+					'Go Back'
 				)
-			);
-		})
+			),
+			props.expenseArray.map(function (uniqueExpense) {
+				return _react2.default.createElement(
+					'div',
+					{ className: 'tripList' },
+					_react2.default.createElement(
+						'h3',
+						null,
+						uniqueExpense.expenseName
+					),
+					_react2.default.createElement(
+						'p',
+						null,
+						uniqueExpense.expenseCurrency
+					),
+					_react2.default.createElement(
+						'p',
+						null,
+						uniqueExpense.expenseAmount
+					)
+				);
+			})
+		)
 	);
 };
 
@@ -35794,6 +35803,7 @@ var MainPortal = function (_React$Component) {
 		_this.addExpense = _this.addExpense.bind(_this);
 		_this.exitForm = _this.exitForm.bind(_this);
 		_this.openAddExpense = _this.openAddExpense.bind(_this);
+		_this.goBack = _this.goBack.bind(_this);
 		return _this;
 	}
 
@@ -35815,6 +35825,13 @@ var MainPortal = function (_React$Component) {
 		value: function exitForm() {
 			this.setState({
 				tripShow: false
+			});
+		}
+	}, {
+		key: 'goBack',
+		value: function goBack() {
+			this.setState({
+				theTripPortal: true
 			});
 		}
 	}, {
@@ -35917,7 +35934,7 @@ var MainPortal = function (_React$Component) {
 			if (this.state.theTripPortal == true) {
 				theTripPortal = _react2.default.createElement(TheTrip, { reference: function reference(ref) {
 						return _this2.uniqueTrip = ref;
-					}, open: this.openAddExpense, uniqueName: this.state.uniqueTripName, uniqueBudget: this.state.uniqueTripBudget, uniqueCurrnecy: this.state.uniqueTripCurrency, uniqueNotes: this.state.uniqueTripNotes, expenseArray: this.state.unqiueExpenseArray });
+					}, open: this.openAddExpense, uniqueName: this.state.uniqueTripName, uniqueBudget: this.state.uniqueTripBudget, uniqueCurrnecy: this.state.uniqueTripCurrency, uniqueNotes: this.state.uniqueTripNotes, expenseArray: this.state.unqiueExpenseArray, back: this.goBack });
 			}
 			if (this.state.theTripPortal == false) {
 				theTripPortal = _react2.default.createElement(

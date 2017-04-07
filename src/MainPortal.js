@@ -40,26 +40,33 @@ const AddExpense = (props) => {
 	)
 }
 
+
+
+
 const TheTrip = (props) => {
 
 		return (
-			<section className="uniqueTripContainer" ref={props.reference}>
-				<button onClick={props.open}>Add an Expense</button>
-				<div className="uniqueTripDetails">
-					<h1>{props.uniqueName}</h1>
-					<p>{props.uniqueBudget}</p>
-					<p>{props.uniqueCurrency}</p>
-					<p>{props.uniqueNotes}</p>
-				</div>	
-				{props.expenseArray.map((uniqueExpense) => {
-					return (
-						<div className="expenseList">
-							<h3>{uniqueExpense.expenseName}</h3>
-							<p>{uniqueExpense.expenseCurrency}</p>
-							<p>{uniqueExpense.expenseAmount}</p>
-						</div>
-					)
-				})}
+			<section className="tripsSection wrapper" ref={props.reference}>
+				<article className="tripsContainer">
+					<div className="tripsHeader">
+						<h1>{props.uniqueName}</h1>
+						<p>{props.uniqueBudget}</p>
+						<p>{props.uniqueCurrency}</p>
+						<p>{props.uniqueNotes}</p>
+						<button className="btn" onClick={props.open}>Add an Expense</button>
+						<button className="btn" onClick={props.back}>Go Back</button>
+					</div>
+					
+					{props.expenseArray.map((uniqueExpense) => {
+						return (
+							<div className="tripList">
+								<h3>{uniqueExpense.expenseName}</h3>
+								<p>{uniqueExpense.expenseCurrency}</p>
+								<p>{uniqueExpense.expenseAmount}</p>
+							</div>
+						)
+					})}
+				</article>
 			</section>
 		)
 
@@ -96,6 +103,7 @@ export default class MainPortal extends React.Component {
 		this.addExpense = this.addExpense.bind(this);
 		this.exitForm = this.exitForm.bind(this);
 		this.openAddExpense = this.openAddExpense.bind(this);
+		this.goBack = this.goBack.bind(this);
 	}
 	
 	handleChange(e) {
@@ -112,6 +120,11 @@ export default class MainPortal extends React.Component {
 	exitForm() {
 		this.setState({
 			tripShow: false
+		})
+	}
+	goBack() {
+		this.setState({
+			theTripPortal: true
 		})
 	}
 	addTrip(e) {
@@ -200,7 +213,7 @@ export default class MainPortal extends React.Component {
 		let theTripPortal = '';
 		if (this.state.theTripPortal == true) {
 			theTripPortal = (
-					<TheTrip reference={ref => this.uniqueTrip = ref} open={this.openAddExpense} uniqueName={this.state.uniqueTripName} uniqueBudget={this.state.uniqueTripBudget} uniqueCurrnecy={this.state.uniqueTripCurrency} uniqueNotes={this.state.uniqueTripNotes} expenseArray={this.state.unqiueExpenseArray} />
+					<TheTrip reference={ref => this.uniqueTrip = ref} open={this.openAddExpense} uniqueName={this.state.uniqueTripName} uniqueBudget={this.state.uniqueTripBudget} uniqueCurrnecy={this.state.uniqueTripCurrency} uniqueNotes={this.state.uniqueTripNotes} expenseArray={this.state.unqiueExpenseArray} back={this.goBack} />
 				)
 		}
 		if (this.state.theTripPortal == false) {
