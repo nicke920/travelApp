@@ -35662,7 +35662,7 @@ var MainPortal = function (_React$Component) {
 			tripShow: '',
 			expenseShow: '',
 			theTripPortal: true,
-			activeTrip: '',
+			tripIndex: '',
 			expensesArray: [],
 			expenseName: '',
 			expenseAmount: '',
@@ -35713,7 +35713,7 @@ var MainPortal = function (_React$Component) {
 		value: function goBack() {
 			this.setState({
 				theTripPortal: true,
-				activeTrip: ''
+				tripIndex: ''
 			});
 		}
 		//to add a trip to the list
@@ -35727,7 +35727,8 @@ var MainPortal = function (_React$Component) {
 				tripName: this.state.tripName,
 				tripBudget: this.state.tripBudget,
 				tripCurrency: this.state.tripCurrency,
-				tripNotes: this.state.tripNotes
+				tripNotes: this.state.tripNotes,
+				expensesArray: []
 			};
 			tripDuplicate.push(tripDetails);
 			this.setState({
@@ -35738,6 +35739,7 @@ var MainPortal = function (_React$Component) {
 				tripNotes: '',
 				tripShow: false
 			});
+			console.log('nicca', this.state.tripsArray);
 		}
 		//to remove a trip from the list
 
@@ -35760,7 +35762,7 @@ var MainPortal = function (_React$Component) {
 			console.log('wheoooooo', trippy);
 			this.setState({
 				theTripPortal: false,
-				activeTrip: trippy
+				tripIndex: i
 			});
 		}
 		//to show the add an expense form
@@ -35786,21 +35788,19 @@ var MainPortal = function (_React$Component) {
 		key: 'addAnExpense',
 		value: function addAnExpense(e) {
 			e.preventDefault();
+			var tripIndex = this.state.tripIndex;
 			var expenseDetails = {
 				expenseName: this.state.expenseName,
 				expenseAmount: this.state.expenseAmount,
 				expenseType: this.state.expenseType
 			};
-			var expensesArrayDuplicate = this.state.expensesArray.slice();
-			expensesArrayDuplicate.push(expenseDetails);
+			var tripsArrayDuplicate = this.state.tripsArray.slice();
+			tripsArrayDuplicate[tripIndex].expensesArray.push(expenseDetails);
+			tripsArrayDuplicate[tripIndex].tripBudgetLeft = tripsArrayDuplicate[tripIndex].tripBudget - this.state.expenseAmount;
 			this.setState({
-				expensesArray: expensesArrayDuplicate,
-				expenseName: '',
-				expenseAmount: '',
-				expenseType: '',
+				tripsArray: tripsArrayDuplicate,
 				expenseShow: false
 			});
-			// console.log('gucci', this.state.expensesArray);
 		}
 	}, {
 		key: 'removeExpense',
@@ -35947,7 +35947,7 @@ var MainPortal = function (_React$Component) {
 					)
 				);
 			}
-			//inside the individual trip
+			//individual trip portal
 			if (this.state.theTripPortal == false) {
 				theTripPortal = _react2.default.createElement(
 					'section',
@@ -35961,7 +35961,17 @@ var MainPortal = function (_React$Component) {
 							_react2.default.createElement(
 								'h2',
 								null,
-								this.state.activeTrip.tripName
+								this.state.tripsArray[this.state.tripIndex].tripName
+							),
+							_react2.default.createElement(
+								'p',
+								null,
+								this.state.tripsArray[this.state.tripIndex].tripBudget
+							),
+							_react2.default.createElement(
+								'p',
+								null,
+								this.state.tripsArray[this.state.tripIndex].tripBudgetLeft
 							),
 							_react2.default.createElement(
 								'button',
@@ -35974,7 +35984,7 @@ var MainPortal = function (_React$Component) {
 								'Go back'
 							)
 						),
-						this.state.expensesArray.map(function (expense, i) {
+						this.state.tripsArray[this.state.tripIndex].expensesArray.map(function (expense, i) {
 							return _react2.default.createElement(
 								'div',
 								{ className: 'tripList' },
@@ -36025,20 +36035,6 @@ var MainPortal = function (_React$Component) {
 							'h2',
 							{ className: 'logo' },
 							'TripPlanner'
-						)
-					),
-					_react2.default.createElement(
-						'div',
-						{ className: 'headerBottom wrapper' },
-						_react2.default.createElement(
-							'h3',
-							null,
-							'Destination: ' + this.state.uniqueTripName
-						),
-						_react2.default.createElement(
-							'h3',
-							null,
-							'Budget: ' + this.state.uniqueTripBudget + ' ' + this.state.uniqueTripCurrency
 						)
 					)
 				),

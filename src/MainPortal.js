@@ -30,7 +30,7 @@ export default class MainPortal extends React.Component {
 			tripShow: '',
 			expenseShow: '',
 			theTripPortal: true,
-			activeTrip:'',
+			tripIndex: '',
 			expensesArray: [],
 			expenseName: '',
 			expenseAmount: '',
@@ -69,7 +69,7 @@ export default class MainPortal extends React.Component {
 	goBack() {
 		this.setState({
 			theTripPortal: true,
-			activeTrip: ''
+			tripIndex: ''
 		})
 	}
 	//to add a trip to the list
@@ -80,7 +80,8 @@ export default class MainPortal extends React.Component {
 			tripName: this.state.tripName,
 			tripBudget: this.state.tripBudget,
 			tripCurrency: this.state.tripCurrency,
-			tripNotes: this.state.tripNotes
+			tripNotes: this.state.tripNotes,
+			expensesArray: []
 		}
 		tripDuplicate.push(tripDetails);
 		this.setState({
@@ -91,6 +92,7 @@ export default class MainPortal extends React.Component {
 			tripNotes: '',
 			tripShow: false
 		})
+		console.log('nicca', this.state.tripsArray)
 	}
 	//to remove a trip from the list
 	removeTrip(i) {
@@ -107,7 +109,7 @@ export default class MainPortal extends React.Component {
 		console.log('wheoooooo', trippy);
 		this.setState({
 			theTripPortal: false,
-			activeTrip: trippy
+			tripIndex: i
 		})
 	}
 	//to show the add an expense form
@@ -125,21 +127,21 @@ export default class MainPortal extends React.Component {
 	}
 	addAnExpense(e) {
 		e.preventDefault();
+		const tripIndex = this.state.tripIndex;
 		const expenseDetails = {
 			expenseName: this.state.expenseName,
 			expenseAmount: this.state.expenseAmount,
 			expenseType: this.state.expenseType
 		}
-		const expensesArrayDuplicate = this.state.expensesArray.slice();
-		expensesArrayDuplicate.push(expenseDetails);
+		const tripsArrayDuplicate = this.state.tripsArray.slice();
+		tripsArrayDuplicate[tripIndex].expensesArray.push(expenseDetails)
+		tripsArrayDuplicate[tripIndex].tripBudgetLeft = tripsArrayDuplicate[tripIndex].tripBudget - this.state.expenseAmount;
 		this.setState({
-			expensesArray: expensesArrayDuplicate,
-			expenseName: '',
-			expenseAmount: '',
-			expenseType: '',
+			tripsArray: tripsArrayDuplicate,
 			expenseShow: false
 		})
-		// console.log('gucci', this.state.expensesArray);
+		
+
 	}
 	removeExpense(i) {
 		const expensesArrayDuplicate = this.state.expensesArray;
@@ -212,17 +214,19 @@ export default class MainPortal extends React.Component {
 				</section>
 			)
 		}
-		//inside the individual trip
+		//individual trip portal
 		if (this.state.theTripPortal == false) {
 			theTripPortal = (
 				<section className="tripsSection wrapper">
 					<article>
 						<div className="tripsHeader">
-							<h2>{this.state.activeTrip.tripName}</h2>
+							<h2>{this.state.tripsArray[this.state.tripIndex].tripName}</h2>
+							<p>{this.state.tripsArray[this.state.tripIndex].tripBudget}</p>
+							<p>{this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</p>
 							<button className="btn" onClick={this.showExpenseForm}>Add an expense</button>
 							<button className="btn" onClick={this.goBack}>Go back</button>
 						</div>
-						{this.state.expensesArray.map((expense, i) => {
+						{this.state.tripsArray[this.state.tripIndex].expensesArray.map((expense, i) => {
 							return (
 								<div className="tripList">
 									<div className="eachTrip">
@@ -251,10 +255,6 @@ export default class MainPortal extends React.Component {
 					<nav className="wrapper">
 						<h2 className="logo">TripPlanner</h2>
 					</nav>
-					<div className="headerBottom wrapper">
-						<h3>{`Destination: ${this.state.uniqueTripName}`}</h3>
-						<h3>{`Budget: ${this.state.uniqueTripBudget} ${this.state.uniqueTripCurrency}`}</h3>
-					</div>
 				</header>
 				<div className="cta">Hello There! Welcome to the trip planner</div>
 
