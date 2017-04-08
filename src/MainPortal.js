@@ -34,7 +34,7 @@ export default class MainPortal extends React.Component {
 			expensesArray: [],
 			expenseName: '',
 			expenseAmount: '',
-			expenseType: ''
+			expenseType: 'food'
 		}
 		this.handleChange = this.handleChange.bind(this);
 		this.showTravelList = this.showTravelList.bind(this);
@@ -67,7 +67,8 @@ export default class MainPortal extends React.Component {
 	}
 	//to go back to the main trip portal
 	goBack() {
-		this.portalHeader.classList.toggle('smaller')
+		this.portalHeader.classList.toggle('smaller');
+		this.ctaBanner.classList.toggle('hide');
 		this.setState({
 			theTripPortal: true,
 			tripIndex: ''
@@ -108,7 +109,8 @@ export default class MainPortal extends React.Component {
 	enterTrip(trip, i) {
 		const trippy = this.state.tripsArray[i];
 		console.log('wheoooooo', trippy);
-		this.portalHeader.classList.toggle('smaller')
+		this.portalHeader.classList.toggle('smaller');
+		this.ctaBanner.classList.toggle('hide');
 		this.setState({
 			theTripPortal: false,
 			tripIndex: i
@@ -140,17 +142,21 @@ export default class MainPortal extends React.Component {
 		tripsArrayDuplicate[tripIndex].tripBudgetLeft = tripsArrayDuplicate[tripIndex].tripBudget - this.state.expenseAmount;
 		this.setState({
 			tripsArray: tripsArrayDuplicate,
-			expenseShow: false
+			expenseShow: false,
+			expenseName: '',
+			expenseAmount: '',
+			expenseType: 'food'
 		})
 		
 
 	}
 	removeExpense(i) {
-		const expensesArrayDuplicate = this.state.expensesArray;
+		const tripIndex = this.state.tripIndex;
+		const expensesArrayDuplicate = this.state.tripsArray.slice();
 		const indexToDelete = i;
-		expensesArrayDuplicate.splice(i, 1);
+		expensesArrayDuplicate[tripIndex].expensesArray.splice(i, 1);
 		this.setState({
-			expensesArray: expensesArrayDuplicate
+			tripsArray: expensesArrayDuplicate
 		})
 	}
 	render() {
@@ -175,9 +181,9 @@ export default class MainPortal extends React.Component {
 						<label htmlFor="expenseName">Name</label>
 						<input type="text" name="expenseName" placeholder="Title" onChange={this.handleChange}/>
 						<label htmlFor="expenseType">Type</label>
-						<select name="expenseAmount">
-							<option value="accomodation">Accomodation</option>
+						<select name="expenseType" value={this.state.expenseType} onChange={this.handleChange}>
 							<option value="food">Food</option>
+							<option value="accommodation">Accomodation</option>
 							<option value="fun">Fun</option>
 						</select>
 						<button>Submit it</button>
@@ -221,39 +227,61 @@ export default class MainPortal extends React.Component {
 		if (this.state.theTripPortal == false) {
 			theTripPortal = (
 				<section className="tripsSection wrapper">
-					<article>
-						<div className="tripsHeader">
-							<h2>{this.state.tripsArray[this.state.tripIndex].tripName}</h2>
-							<p>{this.state.tripsArray[this.state.tripIndex].tripBudget}</p>
-							<p>{this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</p>
-							<button className="btn" onClick={this.showExpenseForm}>Add an expense</button>
-							<button className="btn" onClick={this.goBack}>Go back</button>
-						</div>
-						{this.state.tripsArray[this.state.tripIndex].expensesArray.map((expense, i) => {
-							return (
-								<div className="tripList">
-									<div className="eachTrip">
+				<aside>
+					<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Welchcorgipembroke.JPG/1200px-Welchcorgipembroke.JPG" alt="" className="userUploadImg"/>
+					<p>Total Budget: {this.state.tripsArray[this.state.tripIndex].tripBudget}</p>
+					<p>Remaining Budget: {this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</p>
+					<p>Trip Notes: {this.state.tripsArray[this.state.tripIndex].tripNotes}</p>
+				</aside>
+				<article>
+					<div className="tripsHeader">
+					<i className="fa fa-arrow-circle-o-left" aria-hidden="true" onClick={this.goBack}></i>
+					<h2>Expenses</h2>
+					<i className="fa fa-plus-circle" aria-hidden="true" onClick={this.showExpenseForm}></i>
+					</div>
+					{this.state.tripsArray[this.state.tripIndex].expensesArray.map((expense, i) => {
+						let typeOfIcon = '';
+						if (expense.expenseType === 'accommodation') {
+							typeOfIcon = (
+									<img src="../assets/img/rentIcon.svg" alt="" className="expenseIcon"/>
+								)
+						}
+						if (expense.expenseType === 'food') {
+							typeOfIcon = (
+									<img src="../assets/img/foodIcon.svg" alt="" className="expenseIcon"/>
+								)
+						}
+						if (expense.expenseType === 'fun') {
+							typeOfIcon = (
+									<img src="../assets/img/funIcon.svg" alt="" className="expenseIcon"/>
+								)
+						}
+						return (
+							<div className="tripList">
+								<div className="expenseTypeDiv">
+									{typeOfIcon}
+								</div>
+								<div className="eachTrip">
 									<h3>{expense.expenseName}</h3>
 									<p>{expense.expenseAmount}</p>
-									<p>{expense.expenseType}</p>
-									</div>
-									<div className="eachAction">
-										<i className="fa fa-trash-o" aria-hidden="true" onClick={() => this.removeExpense(i)}></i>
-									</div>
 								</div>
-							)
+								<div className="eachAction">
+									<i className="fa fa-trash-o" aria-hidden="true" onClick={() => this.removeExpense(i)}></i>
+								</div>
+							</div>
+						)
 
-						})}
-					</article>
+					})}
+				</article>
 				</section>
 			)
 		}
 		let headerDeets = '';
 		if (this.state.tripsArray[this.state.tripIndex] !== undefined) {
 			headerDeets = (
-				<div>
+				<div className="headerBottom wrapper">
 					<h2>{this.state.tripsArray[this.state.tripIndex].tripName}</h2>
-					<p>{this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</p>
+					<h3>Remaining Budget{this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</h3>
 				</div>	
 				)
 		}
@@ -266,10 +294,11 @@ export default class MainPortal extends React.Component {
 				<header className="heroImage" ref={ref => this.portalHeader = ref}>
 					<nav className="wrapper">
 						<h2 className="logo">TripPlanner</h2>
-						{headerDeets}
 					</nav>
+						{headerDeets}
+
 				</header>
-				<div className="cta">Hello There! Welcome to the trip planner</div>
+				<div className="cta" ref={ref => this.ctaBanner = ref}>Hello There! Welcome to the trip planner</div>
 
 				{theTripPortal}
 					

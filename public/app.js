@@ -35666,7 +35666,7 @@ var MainPortal = function (_React$Component) {
 			expensesArray: [],
 			expenseName: '',
 			expenseAmount: '',
-			expenseType: ''
+			expenseType: 'food'
 		};
 		_this.handleChange = _this.handleChange.bind(_this);
 		_this.showTravelList = _this.showTravelList.bind(_this);
@@ -35712,6 +35712,7 @@ var MainPortal = function (_React$Component) {
 		key: 'goBack',
 		value: function goBack() {
 			this.portalHeader.classList.toggle('smaller');
+			this.ctaBanner.classList.toggle('hide');
 			this.setState({
 				theTripPortal: true,
 				tripIndex: ''
@@ -35762,6 +35763,7 @@ var MainPortal = function (_React$Component) {
 			var trippy = this.state.tripsArray[i];
 			console.log('wheoooooo', trippy);
 			this.portalHeader.classList.toggle('smaller');
+			this.ctaBanner.classList.toggle('hide');
 			this.setState({
 				theTripPortal: false,
 				tripIndex: i
@@ -35801,17 +35803,21 @@ var MainPortal = function (_React$Component) {
 			tripsArrayDuplicate[tripIndex].tripBudgetLeft = tripsArrayDuplicate[tripIndex].tripBudget - this.state.expenseAmount;
 			this.setState({
 				tripsArray: tripsArrayDuplicate,
-				expenseShow: false
+				expenseShow: false,
+				expenseName: '',
+				expenseAmount: '',
+				expenseType: 'food'
 			});
 		}
 	}, {
 		key: 'removeExpense',
 		value: function removeExpense(i) {
-			var expensesArrayDuplicate = this.state.expensesArray;
+			var tripIndex = this.state.tripIndex;
+			var expensesArrayDuplicate = this.state.tripsArray.slice();
 			var indexToDelete = i;
-			expensesArrayDuplicate.splice(i, 1);
+			expensesArrayDuplicate[tripIndex].expensesArray.splice(i, 1);
 			this.setState({
-				expensesArray: expensesArrayDuplicate
+				tripsArray: expensesArrayDuplicate
 			});
 		}
 	}, {
@@ -35857,16 +35863,16 @@ var MainPortal = function (_React$Component) {
 						),
 						_react2.default.createElement(
 							'select',
-							{ name: 'expenseAmount' },
-							_react2.default.createElement(
-								'option',
-								{ value: 'accomodation' },
-								'Accomodation'
-							),
+							{ name: 'expenseType', value: this.state.expenseType, onChange: this.handleChange },
 							_react2.default.createElement(
 								'option',
 								{ value: 'food' },
 								'Food'
+							),
+							_react2.default.createElement(
+								'option',
+								{ value: 'accommodation' },
+								'Accomodation'
 							),
 							_react2.default.createElement(
 								'option',
@@ -35960,41 +35966,61 @@ var MainPortal = function (_React$Component) {
 					'section',
 					{ className: 'tripsSection wrapper' },
 					_react2.default.createElement(
+						'aside',
+						null,
+						_react2.default.createElement('img', { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Welchcorgipembroke.JPG/1200px-Welchcorgipembroke.JPG', alt: '', className: 'userUploadImg' }),
+						_react2.default.createElement(
+							'p',
+							null,
+							'Total Budget: ',
+							this.state.tripsArray[this.state.tripIndex].tripBudget
+						),
+						_react2.default.createElement(
+							'p',
+							null,
+							'Remaining Budget: ',
+							this.state.tripsArray[this.state.tripIndex].tripBudgetLeft
+						),
+						_react2.default.createElement(
+							'p',
+							null,
+							'Trip Notes: ',
+							this.state.tripsArray[this.state.tripIndex].tripNotes
+						)
+					),
+					_react2.default.createElement(
 						'article',
 						null,
 						_react2.default.createElement(
 							'div',
 							{ className: 'tripsHeader' },
+							_react2.default.createElement('i', { className: 'fa fa-arrow-circle-o-left', 'aria-hidden': 'true', onClick: this.goBack }),
 							_react2.default.createElement(
 								'h2',
 								null,
-								this.state.tripsArray[this.state.tripIndex].tripName
+								'Expenses'
 							),
-							_react2.default.createElement(
-								'p',
-								null,
-								this.state.tripsArray[this.state.tripIndex].tripBudget
-							),
-							_react2.default.createElement(
-								'p',
-								null,
-								this.state.tripsArray[this.state.tripIndex].tripBudgetLeft
-							),
-							_react2.default.createElement(
-								'button',
-								{ className: 'btn', onClick: this.showExpenseForm },
-								'Add an expense'
-							),
-							_react2.default.createElement(
-								'button',
-								{ className: 'btn', onClick: this.goBack },
-								'Go back'
-							)
+							_react2.default.createElement('i', { className: 'fa fa-plus-circle', 'aria-hidden': 'true', onClick: this.showExpenseForm })
 						),
 						this.state.tripsArray[this.state.tripIndex].expensesArray.map(function (expense, i) {
+							var typeOfIcon = '';
+							if (expense.expenseType === 'accommodation') {
+								typeOfIcon = _react2.default.createElement('img', { src: '../assets/img/rentIcon.svg', alt: '', className: 'expenseIcon' });
+							}
+							if (expense.expenseType === 'food') {
+								typeOfIcon = _react2.default.createElement('img', { src: '../assets/img/foodIcon.svg', alt: '', className: 'expenseIcon' });
+							}
+							if (expense.expenseType === 'fun') {
+								typeOfIcon = _react2.default.createElement('img', { src: '../assets/img/funIcon.svg', alt: '', className: 'expenseIcon' });
+							}
 							return _react2.default.createElement(
 								'div',
 								{ className: 'tripList' },
+								_react2.default.createElement(
+									'div',
+									{ className: 'expenseTypeDiv' },
+									typeOfIcon
+								),
 								_react2.default.createElement(
 									'div',
 									{ className: 'eachTrip' },
@@ -36007,11 +36033,6 @@ var MainPortal = function (_React$Component) {
 										'p',
 										null,
 										expense.expenseAmount
-									),
-									_react2.default.createElement(
-										'p',
-										null,
-										expense.expenseType
 									)
 								),
 								_react2.default.createElement(
@@ -36030,15 +36051,16 @@ var MainPortal = function (_React$Component) {
 			if (this.state.tripsArray[this.state.tripIndex] !== undefined) {
 				headerDeets = _react2.default.createElement(
 					'div',
-					null,
+					{ className: 'headerBottom wrapper' },
 					_react2.default.createElement(
 						'h2',
 						null,
 						this.state.tripsArray[this.state.tripIndex].tripName
 					),
 					_react2.default.createElement(
-						'p',
+						'h3',
 						null,
+						'Remaining Budget',
 						this.state.tripsArray[this.state.tripIndex].tripBudgetLeft
 					)
 				);
@@ -36061,13 +36083,15 @@ var MainPortal = function (_React$Component) {
 							'h2',
 							{ className: 'logo' },
 							'TripPlanner'
-						),
-						headerDeets
-					)
+						)
+					),
+					headerDeets
 				),
 				_react2.default.createElement(
 					'div',
-					{ className: 'cta' },
+					{ className: 'cta', ref: function ref(_ref2) {
+							return _this2.ctaBanner = _ref2;
+						} },
 					'Hello There! Welcome to the trip planner'
 				),
 				theTripPortal
