@@ -67,6 +67,7 @@ export default class MainPortal extends React.Component {
 	}
 	//to go back to the main trip portal
 	goBack() {
+		this.portalHeader.classList.toggle('smaller')
 		this.setState({
 			theTripPortal: true,
 			tripIndex: ''
@@ -107,6 +108,7 @@ export default class MainPortal extends React.Component {
 	enterTrip(trip, i) {
 		const trippy = this.state.tripsArray[i];
 		console.log('wheoooooo', trippy);
+		this.portalHeader.classList.toggle('smaller')
 		this.setState({
 			theTripPortal: false,
 			tripIndex: i
@@ -201,6 +203,7 @@ export default class MainPortal extends React.Component {
 										<h3>{trip.tripName}</h3>
 										<p>{trip.tripCurrency}</p>
 										<p>{trip.tripBudget}</p>
+										<p>{trip.tripBudgetLeft}</p>
 										<p className="notes">{trip.tripNotes}</p>
 									</div>
 									<div className="eachAction">
@@ -245,15 +248,25 @@ export default class MainPortal extends React.Component {
 				</section>
 			)
 		}
+		let headerDeets = '';
+		if (this.state.tripsArray[this.state.tripIndex] !== undefined) {
+			headerDeets = (
+				<div>
+					<h2>{this.state.tripsArray[this.state.tripIndex].tripName}</h2>
+					<p>{this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</p>
+				</div>	
+				)
+		}
 
 
 		return (
 			<div>
 				{tripForm}
 				{expenseForm}
-				<header className="heroImage">
+				<header className="heroImage" ref={ref => this.portalHeader = ref}>
 					<nav className="wrapper">
 						<h2 className="logo">TripPlanner</h2>
+						{headerDeets}
 					</nav>
 				</header>
 				<div className="cta">Hello There! Welcome to the trip planner</div>

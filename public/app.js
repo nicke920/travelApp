@@ -35711,6 +35711,7 @@ var MainPortal = function (_React$Component) {
 	}, {
 		key: 'goBack',
 		value: function goBack() {
+			this.portalHeader.classList.toggle('smaller');
 			this.setState({
 				theTripPortal: true,
 				tripIndex: ''
@@ -35760,6 +35761,7 @@ var MainPortal = function (_React$Component) {
 		value: function enterTrip(trip, i) {
 			var trippy = this.state.tripsArray[i];
 			console.log('wheoooooo', trippy);
+			this.portalHeader.classList.toggle('smaller');
 			this.setState({
 				theTripPortal: false,
 				tripIndex: i
@@ -35928,6 +35930,11 @@ var MainPortal = function (_React$Component) {
 									),
 									_react2.default.createElement(
 										'p',
+										null,
+										trip.tripBudgetLeft
+									),
+									_react2.default.createElement(
+										'p',
 										{ className: 'notes' },
 										trip.tripNotes
 									)
@@ -36019,6 +36026,23 @@ var MainPortal = function (_React$Component) {
 					)
 				);
 			}
+			var headerDeets = '';
+			if (this.state.tripsArray[this.state.tripIndex] !== undefined) {
+				headerDeets = _react2.default.createElement(
+					'div',
+					null,
+					_react2.default.createElement(
+						'h2',
+						null,
+						this.state.tripsArray[this.state.tripIndex].tripName
+					),
+					_react2.default.createElement(
+						'p',
+						null,
+						this.state.tripsArray[this.state.tripIndex].tripBudgetLeft
+					)
+				);
+			}
 
 			return _react2.default.createElement(
 				'div',
@@ -36027,7 +36051,9 @@ var MainPortal = function (_React$Component) {
 				expenseForm,
 				_react2.default.createElement(
 					'header',
-					{ className: 'heroImage' },
+					{ className: 'heroImage', ref: function ref(_ref) {
+							return _this2.portalHeader = _ref;
+						} },
 					_react2.default.createElement(
 						'nav',
 						{ className: 'wrapper' },
@@ -36035,7 +36061,8 @@ var MainPortal = function (_React$Component) {
 							'h2',
 							{ className: 'logo' },
 							'TripPlanner'
-						)
+						),
+						headerDeets
 					)
 				),
 				_react2.default.createElement(
