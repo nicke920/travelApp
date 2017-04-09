@@ -27,6 +27,9 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "react": "^15.5.3",
+    "react-dropzone": "^3.12.3",
+    "superagent": "^3.5.2"
   }
 }

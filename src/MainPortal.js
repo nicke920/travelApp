@@ -1,5 +1,7 @@
 import React from 'react';
 import { ajax } from 'jquery';
+import Dropzone from 'react-dropzone';
+import request from 'superagent';
 
 const AddTripForm = (props) => {
 	return (
@@ -16,6 +18,9 @@ const AddTripForm = (props) => {
 		</div>
 	)
 }
+
+const CLOUDINARY_UPLOAD_PRESET = 'uy9xwo0f';
+const CLOUDINARY_UPLOAD_URL = 'https://api.cloudinary.com/v1_1/diystpeqh/upload';
 
 export default class MainPortal extends React.Component {
 	constructor() {
@@ -34,7 +39,8 @@ export default class MainPortal extends React.Component {
 			expensesArray: [],
 			expenseName: '',
 			expenseAmount: '',
-			expenseType: 'food'
+			expenseType: 'food',
+			uploadedFileCloudinaryUrl: ''
 		}
 		this.handleChange = this.handleChange.bind(this);
 		this.showTravelList = this.showTravelList.bind(this);
@@ -46,7 +52,32 @@ export default class MainPortal extends React.Component {
 		this.exitExpenseForm = this.exitExpenseForm.bind(this);
 		this.addAnExpense = this.addAnExpense.bind(this);
 		this.removeExpense = this.removeExpense.bind(this);
+		this.onImageDrop = this.onImageDrop.bind(this);
 	}
+	onImageDrop(files) {
+		this.setState({
+			uploadedFile: files[0]
+		});
+
+		this.handleImageUpload(files[0]);
+	}
+	handleImageUpload(file) {
+		let upload = request.post(CLOUDINARY_UPLOAD_URL)
+	                        .field('upload_preset', CLOUDINARY_UPLOAD_PRESET)
+	                        .field('file', file);
+	    upload.end((err, response) => {
+	      if (err) {
+	        console.error(err);
+	      }
+
+	      if (response.body.secure_url !== '') {
+	        this.setState({
+	          uploadedFileCloudinaryUrl: response.body.secure_url
+	        });
+	      }
+	    });
+	}
+
 	//to capture the input text fields
 	handleChange(e) {
 		this.setState({
@@ -160,6 +191,34 @@ export default class MainPortal extends React.Component {
 		})
 	}
 	render() {
+		let dropZone = '';
+		if (this.state.uploadedFileCloudinaryUrl === '') {
+			dropZone = (
+				<div>
+					<p>Click the photo to upload a photo</p>
+					<Dropzone
+						className="dropZone"
+						multiple={false}
+						accept="image/*"
+						onDrop={this.onImageDrop.bind(this)}>
+						<img src="../assets/img/upload.svg" alt=""/>
+					</Dropzone>
+				</div>
+			)
+		} else {
+			dropZone = (
+				<div>
+					<Dropzone
+						className="dropZone"
+						multiple={false}
+						accept="image/*"
+						onDrop={this.onImageDrop.bind(this)}>
+						<img src={this.state.uploadedFileCloudinaryUrl} alt=""/>
+					</Dropzone>
+				</div>
+			)
+		}
+
 		//when user clicks add a trip... on click, it sets tripShow state to true, and when it's true, we show tripForm
 		//ADD A TRIP FORM
 		let tripForm = '';
@@ -228,34 +287,34 @@ export default class MainPortal extends React.Component {
 			theTripPortal = (
 				<section className="tripsSection wrapper">
 				<aside>
-					<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Welchcorgipembroke.JPG/1200px-Welchcorgipembroke.JPG" alt="" className="userUploadImg"/>
+					{dropZone}
 					<p>Total Budget: {this.state.tripsArray[this.state.tripIndex].tripBudget}</p>
 					<p>Remaining Budget: {this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</p>
 					<p>Trip Notes: {this.state.tripsArray[this.state.tripIndex].tripNotes}</p>
 				</aside>
 				<article>
 					<div className="tripsHeader">
-					<i className="fa fa-arrow-circle-o-left" aria-hidden="true" onClick={this.goBack}></i>
-					<h2>Expenses</h2>
-					<i className="fa fa-plus-circle" aria-hidden="true" onClick={this.showExpenseForm}></i>
+						<i className="fa fa-arrow-circle-o-left" aria-hidden="true" onClick={this.goBack}></i>
+						<h2>Expenses</h2>
+						<i className="fa fa-plus-circle" aria-hidden="true" onClick={this.showExpenseForm}></i>
 					</div>
-					{this.state.tripsArray[this.state.tripIndex].expensesArray.map((expense, i) => {
-						let typeOfIcon = '';
-						if (expense.expenseType === 'accommodation') {
-							typeOfIcon = (
-									<img src="../assets/img/rentIcon.svg" alt="" className="expenseIcon"/>
-								)
-						}
-						if (expense.expenseType === 'food') {
-							typeOfIcon = (
-									<img src="../assets/img/foodIcon.svg" alt="" className="expenseIcon"/>
-								)
-						}
-						if (expense.expenseType === 'fun') {
-							typeOfIcon = (
-									<img src="../assets/img/funIcon.svg" alt="" className="expenseIcon"/>
-								)
-						}
+						{this.state.tripsArray[this.state.tripIndex].expensesArray.map((expense, i) => {
+							let typeOfIcon = '';
+							if (expense.expenseType === 'accommodation') {
+								typeOfIcon = (
+										<img src="../assets/img/rentIcon.svg" alt="" className="expenseIcon"/>
+									)
+							}
+							if (expense.expenseType === 'food') {
+								typeOfIcon = (
+										<img src="../assets/img/foodIcon.svg" alt="" className="expenseIcon"/>
+									)
+							}
+							if (expense.expenseType === 'fun') {
+								typeOfIcon = (
+										<img src="../assets/img/funIcon.svg" alt="" className="expenseIcon"/>
+									)
+							}
 						return (
 							<div className="tripList">
 								<div className="expenseTypeDiv">
@@ -280,8 +339,8 @@ export default class MainPortal extends React.Component {
 		if (this.state.tripsArray[this.state.tripIndex] !== undefined) {
 			headerDeets = (
 				<div className="headerBottom wrapper">
-					<h2>{this.state.tripsArray[this.state.tripIndex].tripName}</h2>
-					<h3>Remaining Budget{this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</h3>
+					<h3>{this.state.tripsArray[this.state.tripIndex].tripName}</h3>
+					<h3><p>Remaining Budget:</p> {this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</h3>
 				</div>	
 				)
 		}
@@ -299,7 +358,7 @@ export default class MainPortal extends React.Component {
 
 				</header>
 				<div className="cta" ref={ref => this.ctaBanner = ref}>Hello There! Welcome to the trip planner</div>
-
+				
 				{theTripPortal}
 					
 			</div>
