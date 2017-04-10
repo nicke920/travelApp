@@ -292,6 +292,12 @@ article {
     .eachAction .fa:hover {
       transform: scale(1.2); }
 
+form {
+  width: 400px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column; }
+
 .overlay {
   position: fixed;
   top: 0;

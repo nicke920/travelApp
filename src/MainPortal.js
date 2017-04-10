@@ -3,6 +3,17 @@ import { ajax } from 'jquery';
 import Dropzone from 'react-dropzone';
 import request from 'superagent';
 
+var config = {
+    apiKey: "AIzaSyC71JCKeX0y6ohdWQuzXaoYQkP1RwirXAc",
+    authDomain: "tripplanner-5f8ce.firebaseapp.com",
+    databaseURL: "https://tripplanner-5f8ce.firebaseio.com",
+    projectId: "tripplanner-5f8ce",
+    storageBucket: "tripplanner-5f8ce.appspot.com",
+    messagingSenderId: "780822703710"
+  };
+  firebase.initializeApp(config);
+
+
 const AddTripForm = (props) => {
 	return (
 		<div className="overlay" ref={props.reference}>

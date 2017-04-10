@@ -38536,6 +38536,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var config = {
+	apiKey: "AIzaSyC71JCKeX0y6ohdWQuzXaoYQkP1RwirXAc",
+	authDomain: "tripplanner-5f8ce.firebaseapp.com",
+	databaseURL: "https://tripplanner-5f8ce.firebaseio.com",
+	projectId: "tripplanner-5f8ce",
+	storageBucket: "tripplanner-5f8ce.appspot.com",
+	messagingSenderId: "780822703710"
+};
+firebase.initializeApp(config);
+
 var AddTripForm = function AddTripForm(props) {
 	return _react2.default.createElement(
 		'div',
@@ -39121,6 +39131,8 @@ var _reactRouter = require('react-router');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -39136,21 +39148,76 @@ var LogIn = function (_React$Component) {
 		var _this = _possibleConstructorReturn(this, (LogIn.__proto__ || Object.getPrototypeOf(LogIn)).call(this));
 
 		_this.state = {
+			email: '',
+			password: '',
 			loggedIn: '',
-			screenActive: ''
+			screenActive: '',
+			signedUp: '',
+			signUpEmail: '',
+			signUpPassword: '',
+			passwordConfirm: ''
 		};
 
 		_this.logIn = _this.logIn.bind(_this);
 		_this.enterPortal = _this.enterPortal.bind(_this);
+		_this.handleChange = _this.handleChange.bind(_this);
+		_this.signUp = _this.signUp.bind(_this);
 		return _this;
 	}
 
 	_createClass(LogIn, [{
-		key: 'logIn',
-		value: function logIn() {
-			this.setState({
-				loggedIn: true
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			var _this2 = this;
+
+			firebase.auth().onAuthStateChanged(function (user) {
+				console.log('user nigga');
+				if (user) {
+					_this2.setState({
+						loggedIn: true
+					});
+				} else {
+					_this2.setState({
+						loggedIn: false
+					});
+				}
 			});
+		}
+	}, {
+		key: 'handleChange',
+		value: function handleChange(e) {
+			this.setState(_defineProperty({}, e.target.name, e.target.value));
+		}
+	}, {
+		key: 'logIn',
+		value: function logIn(e) {
+			var _this3 = this;
+
+			e.preventDefault();
+			firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then(function (userData) {
+				_this3.setState({
+					loggedIn: true
+				});
+			}).catch(function (error) {
+				alert(error);
+			});
+		}
+	}, {
+		key: 'signUp',
+		value: function signUp(e) {
+			if (this.state.signUpPassword === this.state.passwordConfirm) {
+				firebase.auth().createUserWithEmailAndPassword(this.state.signUpEmail, this.state.signUpPassword).then(function (userData) {
+					console.log(userData);
+				}).catch(function (error) {
+					alert(error);
+					console.log('error message');
+				});
+				this.setState({
+					signedUp: true
+				});
+			} else {
+				alert('sorry bruvvvvv');
+			}
 		}
 	}, {
 		key: 'enterPortal',
@@ -39163,42 +39230,70 @@ var LogIn = function (_React$Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this2 = this;
+			var _this4 = this;
 
 			var logInView = '';
-			if (this.state.loggedIn == false) {
+			if (this.state.loggedIn == false || this.state.signedUp == false) {
 				logInView = _react2.default.createElement(
 					'div',
 					{ className: 'loginPortal', ref: function ref(_ref) {
-							return _this2.loginPortal = _ref;
+							return _this4.loginPortal = _ref;
 						} },
 					_react2.default.createElement(
 						'form',
-						null,
+						{ onSubmit: this.logIn },
 						_react2.default.createElement(
 							'label',
 							{ htmlFor: 'email' },
 							'Email'
 						),
-						_react2.default.createElement('input', { type: 'email', placeholder: 'email' }),
+						_react2.default.createElement('input', { type: 'email', placeholder: 'email', onChange: this.handleChange, name: 'email' }),
 						_react2.default.createElement(
 							'label',
 							{ htmlFor: 'password' },
 							'Password'
 						),
-						_react2.default.createElement('input', { type: 'password', placeholder: 'password' })
+						_react2.default.createElement('input', { type: 'password', placeholder: 'password', onChange: this.handleChange, name: 'password' }),
+						_react2.default.createElement(
+							'button',
+							null,
+							'Sign In'
+						)
 					),
 					_react2.default.createElement(
-						'button',
-						{ onClick: this.logIn },
-						'Sign In'
+						'form',
+						{ onSubmit: this.signUp },
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'email' },
+							'Email'
+						),
+						_react2.default.createElement('input', { type: 'email', placeholder: 'email', onChange: this.handleChange, name: 'signUpEmail' }),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'password' },
+							'Password'
+						),
+						_react2.default.createElement('input', { type: 'password', placeholder: 'password', onChange: this.handleChange, name: 'signUpPassword' }),
+						_react2.default.createElement(
+							'label',
+							{ htmlFor: 'password' },
+							'Confirm Password'
+						),
+						_react2.default.createElement('input', { type: 'password', placeholder: 'password', onChange: this.handleChange, name: 'passwordConfirm' }),
+						_react2.default.createElement(
+							'button',
+							null,
+							'Sign Up nigga'
+						)
 					)
 				);
-			} else {
+			}
+			if (this.state.loggedIn == true || this.state.signedUp == true) {
 				logInView = _react2.default.createElement(
 					'div',
 					{ className: 'loginPortal', ref: function ref(_ref2) {
-							return _this2.loginPortal = _ref2;
+							return _this4.loginPortal = _ref2;
 						} },
 					_react2.default.createElement(
 						'p',

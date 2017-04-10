@@ -193,7 +193,12 @@ article {
 }
 
 
-
+form {
+	width: 400px;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+}
 
 
 
