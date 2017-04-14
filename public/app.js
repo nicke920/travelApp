@@ -38676,8 +38676,8 @@ var MainPortal = function (_React$Component) {
 	}, {
 		key: 'goBack',
 		value: function goBack() {
-			this.portalHeader.classList.toggle('smaller');
-			this.ctaBanner.classList.toggle('hide');
+			this.portalHeader.classList.toggle('portalHeaderSmaller');
+			this.portalIntro.classList.toggle('hide');
 			this.setState({
 				theTripPortal: true,
 				tripIndex: ''
@@ -38727,8 +38727,8 @@ var MainPortal = function (_React$Component) {
 		value: function enterTrip(trip, i) {
 			var trippy = this.state.tripsArray[i];
 			console.log('wheoooooo', trippy);
-			this.portalHeader.classList.toggle('smaller');
-			this.ctaBanner.classList.toggle('hide');
+			this.portalHeader.classList.toggle('portalHeaderSmaller');
+			this.portalIntro.classList.toggle('hide');
 			this.setState({
 				theTripPortal: false,
 				tripIndex: i
@@ -38790,6 +38790,7 @@ var MainPortal = function (_React$Component) {
 		value: function render() {
 			var _this3 = this;
 
+			//for the user to upload an image
 			var dropZone = '';
 			if (this.state.uploadedFileCloudinaryUrl === '') {
 				dropZone = _react2.default.createElement(
@@ -38807,7 +38808,7 @@ var MainPortal = function (_React$Component) {
 							multiple: false,
 							accept: 'image/*',
 							onDrop: this.onImageDrop.bind(this) },
-						_react2.default.createElement('img', { src: '../assets/img/upload.svg', alt: '' })
+						_react2.default.createElement('img', { src: '../assets/img/corgi.jpg', alt: '' })
 					)
 				);
 			} else {
@@ -38911,11 +38912,6 @@ var MainPortal = function (_React$Component) {
 								'button',
 								{ className: 'btn', onClick: this.showTravelList },
 								'Add a trip'
-							),
-							_react2.default.createElement(
-								'button',
-								{ to: '/' },
-								'Back to home'
 							)
 						),
 						this.state.tripsArray.map(function (trip, i) {
@@ -38966,6 +38962,7 @@ var MainPortal = function (_React$Component) {
 					)
 				);
 			}
+
 			//individual trip portal
 			if (this.state.theTripPortal == false) {
 				theTripPortal = _react2.default.createElement(
@@ -39053,6 +39050,8 @@ var MainPortal = function (_React$Component) {
 					)
 				);
 			}
+
+			//header details
 			var headerDeets = '';
 			if (this.state.tripsArray[this.state.tripIndex] !== undefined) {
 				headerDeets = _react2.default.createElement(
@@ -39083,11 +39082,37 @@ var MainPortal = function (_React$Component) {
 				tripForm,
 				expenseForm,
 				_react2.default.createElement(
-					'div',
-					{ className: 'cta', ref: function ref(_ref) {
-							return _this3.ctaBanner = _ref;
+					'header',
+					{ className: 'portalHeader', ref: function ref(_ref2) {
+							return _this3.portalHeader = _ref2;
 						} },
-					'Hello There! Welcome to the trip planner'
+					_react2.default.createElement(
+						'div',
+						{ className: 'portalIntro', ref: function ref(_ref) {
+								return _this3.portalIntro = _ref;
+							} },
+						_react2.default.createElement(
+							'h1',
+							null,
+							'Welcome'
+						),
+						_react2.default.createElement(
+							'p',
+							null,
+							'1. To get started, click Add A Trip'
+						),
+						_react2.default.createElement(
+							'p',
+							null,
+							'2. Enter in the trip name, trip budget, and any notes you have'
+						),
+						_react2.default.createElement(
+							'p',
+							null,
+							'3. Go inside that trip and keep track of your expenses'
+						)
+					),
+					headerDeets
 				),
 				theTripPortal
 			);

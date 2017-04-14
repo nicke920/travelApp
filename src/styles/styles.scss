@@ -147,6 +147,36 @@ nav {
 }
 
 
+.portalHeader {
+	height: 60vh;
+	width: 100%;
+	background: teal;
+	background: url('../../assets/img/header2.jpg');
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+	transition: all 1s ease;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.portalHeaderSmaller {
+	height: 20vh;
+}
+.portalIntro {
+	max-width: 500px;
+	background: rgba($offWhite, 0.8);
+	padding: 10px;
+	h1 {
+		color: $darkPurple;
+	}
+	p {
+		margin: 10px 0;
+		// font-size: 18px;
+	}
+}
+
+
 
 .dropZone {
 	width: 300px;
@@ -169,34 +199,6 @@ nav {
 	height: 30px;
 	width: 150px;
 	background: $accentOrange;
-}
-
-.heroImage {
-	background: linear-gradient(rgba($primaryPurple,0.7), rgba($primaryPurple,1)), url('../../assets/img/hero.jpg');
-	background-size: cover;
-	background-position: center;
-	height: 70vh;
-	min-height: 350px;
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	font-size: 30px;
-	box-shadow: 0 2px 10px 1px grey;
-	transition: all 2s;
-}
-.smaller {
-	height: 30vh;
-	min-height: 50px;
-}
-
-.cta {
-	padding: 20px 0;
-	background: $darkPurple;
-	color: $offWhite;
-	text-align: center;
-	text-transform: uppercase;
-	font-size: 20px;
 }
 
 

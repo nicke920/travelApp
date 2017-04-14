@@ -109,8 +109,8 @@ export default class MainPortal extends React.Component {
 	}
 	//to go back to the main trip portal
 	goBack() {
-		this.portalHeader.classList.toggle('smaller');
-		this.ctaBanner.classList.toggle('hide');
+		this.portalHeader.classList.toggle('portalHeaderSmaller');
+		this.portalIntro.classList.toggle('hide');
 		this.setState({
 			theTripPortal: true,
 			tripIndex: ''
@@ -151,8 +151,8 @@ export default class MainPortal extends React.Component {
 	enterTrip(trip, i) {
 		const trippy = this.state.tripsArray[i];
 		console.log('wheoooooo', trippy);
-		this.portalHeader.classList.toggle('smaller');
-		this.ctaBanner.classList.toggle('hide');
+		this.portalHeader.classList.toggle('portalHeaderSmaller');
+		this.portalIntro.classList.toggle('hide');
 		this.setState({
 			theTripPortal: false,
 			tripIndex: i
@@ -202,6 +202,7 @@ export default class MainPortal extends React.Component {
 		})
 	}
 	render() {
+		//for the user to upload an image
 		let dropZone = '';
 		if (this.state.uploadedFileCloudinaryUrl === '') {
 			dropZone = (
@@ -212,7 +213,7 @@ export default class MainPortal extends React.Component {
 						multiple={false}
 						accept="image/*"
 						onDrop={this.onImageDrop.bind(this)}>
-						<img src="../assets/img/upload.svg" alt=""/>
+						<img src="../assets/img/corgi.jpg" alt=""/>
 					</Dropzone>
 				</div>
 			)
@@ -230,6 +231,8 @@ export default class MainPortal extends React.Component {
 			)
 		}
 
+
+
 		//when user clicks add a trip... on click, it sets tripShow state to true, and when it's true, we show tripForm
 		//ADD A TRIP FORM
 		let tripForm = '';
@@ -238,6 +241,8 @@ export default class MainPortal extends React.Component {
 				<AddTripForm appear={this.showTravelList} handleChange={this.handleChange} add={this.addTrip} thisValue={this.state.value} reference={ref => this.showTripForm = ref} exit={this.exitForm} />
 			)
 		}
+
+
 
 		//the add an expense form
 		let expenseForm = '';
@@ -262,6 +267,8 @@ export default class MainPortal extends React.Component {
 			)
 		}
 
+
+
 		let theTripPortal = '';
 		//main trip list portal
 		if (this.state.theTripPortal == true) {
@@ -271,7 +278,6 @@ export default class MainPortal extends React.Component {
 						<div className="tripsHeader">
 							<h2>Trips</h2>
 							<button className="btn" onClick={this.showTravelList}>Add a trip</button>
-							<button to="/">Back to home</button>
 						</div>
 						{this.state.tripsArray.map((trip, i) => {
 							return (
@@ -294,6 +300,9 @@ export default class MainPortal extends React.Component {
 				</section>
 			)
 		}
+
+
+
 		//individual trip portal
 		if (this.state.theTripPortal == false) {
 			theTripPortal = (
@@ -347,6 +356,10 @@ export default class MainPortal extends React.Component {
 				</section>
 			)
 		}
+
+
+
+		//header details
 		let headerDeets = '';
 		if (this.state.tripsArray[this.state.tripIndex] !== undefined) {
 			headerDeets = (
@@ -362,8 +375,15 @@ export default class MainPortal extends React.Component {
 			<div>
 				{tripForm}
 				{expenseForm}
-				
-				<div className="cta" ref={ref => this.ctaBanner = ref}>Hello There! Welcome to the trip planner</div>
+				<header className="portalHeader" ref={ref => this.portalHeader = ref}>
+					<div className="portalIntro" ref={ref => this.portalIntro =ref}>
+						<h1>Welcome</h1>
+						<p>1. To get started, click Add A Trip</p>
+						<p>2. Enter in the trip name, trip budget, and any notes you have</p>
+						<p>3. Go inside that trip and keep track of your expenses</p>
+					</div>
+					{headerDeets}
+				</header>
 				
 				{theTripPortal}
 					
