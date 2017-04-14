@@ -39274,13 +39274,13 @@ var LogIn = function (_React$Component) {
 						{ htmlFor: 'email' },
 						'Email'
 					),
-					_react2.default.createElement('input', { type: 'email', placeholder: 'email', onChange: this.handleChange, name: 'email' }),
+					_react2.default.createElement('input', { type: 'email', onChange: this.handleChange, name: 'email' }),
 					_react2.default.createElement(
 						'label',
 						{ htmlFor: 'password' },
 						'Password'
 					),
-					_react2.default.createElement('input', { type: 'password', placeholder: 'password', onChange: this.handleChange, name: 'password' }),
+					_react2.default.createElement('input', { type: 'password', onChange: this.handleChange, name: 'password' }),
 					_react2.default.createElement(
 						'button',
 						null,
@@ -39302,23 +39302,23 @@ var LogIn = function (_React$Component) {
 						{ htmlFor: 'email' },
 						'Email'
 					),
-					_react2.default.createElement('input', { type: 'email', placeholder: 'email', onChange: this.handleChange, name: 'signUpEmail' }),
+					_react2.default.createElement('input', { type: 'email', onChange: this.handleChange, name: 'signUpEmail' }),
 					_react2.default.createElement(
 						'label',
 						{ htmlFor: 'password' },
 						'Password'
 					),
-					_react2.default.createElement('input', { type: 'password', placeholder: 'password', onChange: this.handleChange, name: 'signUpPassword' }),
+					_react2.default.createElement('input', { type: 'password', onChange: this.handleChange, name: 'signUpPassword' }),
 					_react2.default.createElement(
 						'label',
 						{ htmlFor: 'password' },
 						'Confirm Password'
 					),
-					_react2.default.createElement('input', { type: 'password', placeholder: 'password', onChange: this.handleChange, name: 'passwordConfirm' }),
+					_react2.default.createElement('input', { type: 'password', onChange: this.handleChange, name: 'passwordConfirm' }),
 					_react2.default.createElement(
 						'button',
 						null,
-						'Sign Up nigga'
+						'Sign Up'
 					)
 				);
 			}
@@ -39335,48 +39335,65 @@ var LogIn = function (_React$Component) {
 							} },
 						_react2.default.createElement(
 							'div',
-							{ className: 'loginType' },
+							null,
 							_react2.default.createElement(
-								'button',
-								{ onClick: this.showLogInForm, className: 'activeButton', ref: function ref(_ref) {
-										return _this4.logInButton = _ref;
-									} },
-								'Log In'
+								'div',
+								{ className: 'loginType' },
+								_react2.default.createElement(
+									'button',
+									{ onClick: this.showLogInForm, className: 'activeButton', ref: function ref(_ref) {
+											return _this4.logInButton = _ref;
+										} },
+									'Log In'
+								),
+								_react2.default.createElement(
+									'button',
+									{ onClick: this.showSignUpForm, ref: function ref(_ref2) {
+											return _this4.signUpButton = _ref2;
+										} },
+									'Sign Up'
+								)
 							),
-							_react2.default.createElement(
-								'button',
-								{ onClick: this.showSignUpForm, ref: function ref(_ref2) {
-										return _this4.signUpButton = _ref2;
-									} },
-								'Sign Up'
-							)
-						),
-						formToShow
+							formToShow
+						)
 					),
 					_react2.default.createElement('section', { className: 'homeImage' })
 				);
 			}
 			if (this.state.loggedIn == true || this.state.signedUp == true) {
 				logInView = _react2.default.createElement(
-					'div',
-					{ className: 'loginPortal', ref: function ref(_ref4) {
-							return _this4.loginPortal = _ref4;
-						} },
+					'section',
+					{ className: 'homePage' },
 					_react2.default.createElement(
-						'p',
-						null,
-						'You\'re Logged In Already!'
+						'div',
+						{ className: 'loginPortal', ref: function ref(_ref4) {
+								return _this4.loginPortal = _ref4;
+							} },
+						_react2.default.createElement(
+							'div',
+							{ className: 'alreadyLoggedIn' },
+							_react2.default.createElement(
+								'h2',
+								null,
+								'You\'re Logged In Already!'
+							),
+							_react2.default.createElement(
+								'button',
+								null,
+								_react2.default.createElement(
+									_reactRouter.Link,
+									{ to: '/home' },
+									'Enter Portal'
+								)
+							),
+							_react2.default.createElement(
+								'button',
+								{ onClick: this.signOut },
+								'Sign out'
+							)
+						)
 					),
-					_react2.default.createElement(
-						_reactRouter.Link,
-						{ to: '/home' },
-						'Go to home'
-					),
-					_react2.default.createElement(
-						'button',
-						{ onClick: this.signOut },
-						'Sign out cuzzo'
-					)
+					_react2.default.createElement('section', { className: 'homeImage' })
 				);
 			}
 

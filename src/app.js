@@ -124,9 +124,9 @@ class LogIn extends React.Component {
 			<form className="userLogInForm" onSubmit={this.logIn}>
 				<h2>Log In to your account</h2>
 				<label htmlFor="email">Email</label>
-				<input type="email" placeholder="email" onChange={this.handleChange} name="email"/>
+				<input type="email" onChange={this.handleChange} name="email"/>
 				<label htmlFor="password">Password</label>
-				<input type="password" placeholder="password" onChange={this.handleChange} name="password"/>
+				<input type="password" onChange={this.handleChange} name="password"/>
 				<button>Log In</button>
 			</form>
 			)
@@ -136,12 +136,12 @@ class LogIn extends React.Component {
 			<form className="userSignUpForm" onSubmit={this.signUp}>
 				<h2>Sign Up today!</h2>
 				<label htmlFor="email">Email</label>
-				<input type="email" placeholder="email" onChange={this.handleChange} name="signUpEmail"/>
+				<input type="email" onChange={this.handleChange} name="signUpEmail"/>
 				<label htmlFor="password">Password</label>
-				<input type="password" placeholder="password" onChange={this.handleChange} name="signUpPassword"/>
+				<input type="password" onChange={this.handleChange} name="signUpPassword"/>
 				<label htmlFor="password">Confirm Password</label>
-				<input type="password" placeholder="password" onChange={this.handleChange} name="passwordConfirm"/>
-				<button>Sign Up nigga</button>
+				<input type="password" onChange={this.handleChange} name="passwordConfirm"/>
+				<button>Sign Up</button>
 			</form>
 			)
 		}
@@ -153,13 +153,14 @@ class LogIn extends React.Component {
 			logInView = (
 				<section className="homePage">
 					<div className="loginPortal" ref={ref => this.loginPortal = ref}>
-					<div className="loginType">
-						<button onClick={this.showLogInForm} className="activeButton" ref={ref => this.logInButton = ref}>Log In</button>
-						<button onClick={this.showSignUpForm} ref={ref => this.signUpButton = ref}>Sign Up</button>
-					</div>
+						<div>
+							<div className="loginType">
+								<button onClick={this.showLogInForm} className="activeButton" ref={ref => this.logInButton = ref}>Log In</button>
+								<button onClick={this.showSignUpForm} ref={ref => this.signUpButton = ref}>Sign Up</button>
+							</div>
 
-						{formToShow}
-						
+							{formToShow}
+						</div>
 					</div>
 					<section className="homeImage">
 						
@@ -169,11 +170,19 @@ class LogIn extends React.Component {
 		} 
 		if (this.state.loggedIn == true || this.state.signedUp == true) {
 			logInView = (
+				<section className="homePage">
 					<div className="loginPortal" ref={ref => this.loginPortal = ref}>
-						<p>You're Logged In Already!</p>
-						<Link to='/home'>Go to home</Link>
-						<button onClick={this.signOut}>Sign out cuzzo</button>
+						<div className="alreadyLoggedIn">
+							<h2>You're Logged In Already!</h2>
+							<button><Link to='/home'>Enter Portal</Link></button>
+							<button onClick={this.signOut}>Sign out</button>
+						</div>
 					</div>
+					<section className="homeImage">
+						
+					</section>
+				</section>
+					
 				)
 		}
 
