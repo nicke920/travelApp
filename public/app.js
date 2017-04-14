@@ -38911,6 +38911,11 @@ var MainPortal = function (_React$Component) {
 								'button',
 								{ className: 'btn', onClick: this.showTravelList },
 								'Add a trip'
+							),
+							_react2.default.createElement(
+								'button',
+								{ to: '/' },
+								'Back to home'
 							)
 						),
 						this.state.tripsArray.map(function (trip, i) {
@@ -39078,25 +39083,9 @@ var MainPortal = function (_React$Component) {
 				tripForm,
 				expenseForm,
 				_react2.default.createElement(
-					'header',
-					{ className: 'heroImage', ref: function ref(_ref) {
-							return _this3.portalHeader = _ref;
-						} },
-					_react2.default.createElement(
-						'nav',
-						{ className: 'wrapper' },
-						_react2.default.createElement(
-							'h2',
-							{ className: 'logo' },
-							'TripPlanner'
-						)
-					),
-					headerDeets
-				),
-				_react2.default.createElement(
 					'div',
-					{ className: 'cta', ref: function ref(_ref2) {
-							return _this3.ctaBanner = _ref2;
+					{ className: 'cta', ref: function ref(_ref) {
+							return _this3.ctaBanner = _ref;
 						} },
 					'Hello There! Welcome to the trip planner'
 				),
@@ -39155,13 +39144,16 @@ var LogIn = function (_React$Component) {
 			signedUp: '',
 			signUpEmail: '',
 			signUpPassword: '',
-			passwordConfirm: ''
+			passwordConfirm: '',
+			formLogInShow: true
 		};
 
 		_this.logIn = _this.logIn.bind(_this);
 		_this.enterPortal = _this.enterPortal.bind(_this);
 		_this.handleChange = _this.handleChange.bind(_this);
 		_this.signUp = _this.signUp.bind(_this);
+		_this.showLogInForm = _this.showLogInForm.bind(_this);
+		_this.showSignUpForm = _this.showSignUpForm.bind(_this);
 		return _this;
 	}
 
@@ -39171,11 +39163,11 @@ var LogIn = function (_React$Component) {
 			var _this2 = this;
 
 			firebase.auth().onAuthStateChanged(function (user) {
-				console.log('user nigga');
 				if (user) {
 					_this2.setState({
 						loggedIn: true
 					});
+					console.log('user nigga');
 				} else {
 					_this2.setState({
 						loggedIn: false
@@ -39220,6 +39212,23 @@ var LogIn = function (_React$Component) {
 			}
 		}
 	}, {
+		key: 'signOut',
+		value: function signOut(e) {
+			e.preventDefault();
+			firebase.auth().signOut();
+			console.log('user just signed out');
+			if (this.state.loggedIn !== null) {
+				this.setState({
+					loggedIn: false
+				});
+			}
+			if (this.state.signedUp !== null) {
+				this.setState({
+					signedUp: false
+				});
+			}
+		}
+	}, {
 		key: 'enterPortal',
 		value: function enterPortal() {
 			this.loginPortal.classList.toggle('hide');
@@ -39228,72 +39237,130 @@ var LogIn = function (_React$Component) {
 			});
 		}
 	}, {
+		key: 'showLogInForm',
+		value: function showLogInForm() {
+			this.signUpButton.classList.remove('activeButton');
+			this.logInButton.classList.add('activeButton');
+			this.setState({
+				formLogInShow: true
+			});
+		}
+	}, {
+		key: 'showSignUpForm',
+		value: function showSignUpForm() {
+			this.signUpButton.classList.add('activeButton');
+			this.logInButton.classList.remove('activeButton');
+			this.setState({
+				formLogInShow: false
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			var _this4 = this;
 
+			var formToShow = '';
+			if (this.state.formLogInShow === true) {
+				formToShow = _react2.default.createElement(
+					'form',
+					{ className: 'userLogInForm', onSubmit: this.logIn },
+					_react2.default.createElement(
+						'h2',
+						null,
+						'Log In to your account'
+					),
+					_react2.default.createElement(
+						'label',
+						{ htmlFor: 'email' },
+						'Email'
+					),
+					_react2.default.createElement('input', { type: 'email', placeholder: 'email', onChange: this.handleChange, name: 'email' }),
+					_react2.default.createElement(
+						'label',
+						{ htmlFor: 'password' },
+						'Password'
+					),
+					_react2.default.createElement('input', { type: 'password', placeholder: 'password', onChange: this.handleChange, name: 'password' }),
+					_react2.default.createElement(
+						'button',
+						null,
+						'Log In'
+					)
+				);
+			}
+			if (this.state.formLogInShow === false) {
+				formToShow = _react2.default.createElement(
+					'form',
+					{ className: 'userSignUpForm', onSubmit: this.signUp },
+					_react2.default.createElement(
+						'h2',
+						null,
+						'Sign Up today!'
+					),
+					_react2.default.createElement(
+						'label',
+						{ htmlFor: 'email' },
+						'Email'
+					),
+					_react2.default.createElement('input', { type: 'email', placeholder: 'email', onChange: this.handleChange, name: 'signUpEmail' }),
+					_react2.default.createElement(
+						'label',
+						{ htmlFor: 'password' },
+						'Password'
+					),
+					_react2.default.createElement('input', { type: 'password', placeholder: 'password', onChange: this.handleChange, name: 'signUpPassword' }),
+					_react2.default.createElement(
+						'label',
+						{ htmlFor: 'password' },
+						'Confirm Password'
+					),
+					_react2.default.createElement('input', { type: 'password', placeholder: 'password', onChange: this.handleChange, name: 'passwordConfirm' }),
+					_react2.default.createElement(
+						'button',
+						null,
+						'Sign Up nigga'
+					)
+				);
+			}
+
 			var logInView = '';
 			if (this.state.loggedIn == false || this.state.signedUp == false) {
 				logInView = _react2.default.createElement(
-					'div',
-					{ className: 'loginPortal', ref: function ref(_ref) {
-							return _this4.loginPortal = _ref;
-						} },
+					'section',
+					{ className: 'homePage' },
 					_react2.default.createElement(
-						'form',
-						{ onSubmit: this.logIn },
+						'div',
+						{ className: 'loginPortal', ref: function ref(_ref3) {
+								return _this4.loginPortal = _ref3;
+							} },
 						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'email' },
-							'Email'
+							'div',
+							{ className: 'loginType' },
+							_react2.default.createElement(
+								'button',
+								{ onClick: this.showLogInForm, className: 'activeButton', ref: function ref(_ref) {
+										return _this4.logInButton = _ref;
+									} },
+								'Log In'
+							),
+							_react2.default.createElement(
+								'button',
+								{ onClick: this.showSignUpForm, ref: function ref(_ref2) {
+										return _this4.signUpButton = _ref2;
+									} },
+								'Sign Up'
+							)
 						),
-						_react2.default.createElement('input', { type: 'email', placeholder: 'email', onChange: this.handleChange, name: 'email' }),
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'password' },
-							'Password'
-						),
-						_react2.default.createElement('input', { type: 'password', placeholder: 'password', onChange: this.handleChange, name: 'password' }),
-						_react2.default.createElement(
-							'button',
-							null,
-							'Sign In'
-						)
+						formToShow
 					),
-					_react2.default.createElement(
-						'form',
-						{ onSubmit: this.signUp },
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'email' },
-							'Email'
-						),
-						_react2.default.createElement('input', { type: 'email', placeholder: 'email', onChange: this.handleChange, name: 'signUpEmail' }),
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'password' },
-							'Password'
-						),
-						_react2.default.createElement('input', { type: 'password', placeholder: 'password', onChange: this.handleChange, name: 'signUpPassword' }),
-						_react2.default.createElement(
-							'label',
-							{ htmlFor: 'password' },
-							'Confirm Password'
-						),
-						_react2.default.createElement('input', { type: 'password', placeholder: 'password', onChange: this.handleChange, name: 'passwordConfirm' }),
-						_react2.default.createElement(
-							'button',
-							null,
-							'Sign Up nigga'
-						)
-					)
+					_react2.default.createElement('section', { className: 'homeImage' })
 				);
 			}
 			if (this.state.loggedIn == true || this.state.signedUp == true) {
 				logInView = _react2.default.createElement(
 					'div',
-					{ className: 'loginPortal', ref: function ref(_ref2) {
-							return _this4.loginPortal = _ref2;
+					{ className: 'loginPortal', ref: function ref(_ref4) {
+							return _this4.loginPortal = _ref4;
 						} },
 					_react2.default.createElement(
 						'p',
@@ -39304,9 +39371,15 @@ var LogIn = function (_React$Component) {
 						_reactRouter.Link,
 						{ to: '/home' },
 						'Go to home'
+					),
+					_react2.default.createElement(
+						'button',
+						{ onClick: this.signOut },
+						'Sign out cuzzo'
 					)
 				);
 			}
+
 			return _react2.default.createElement(
 				'div',
 				null,
@@ -39334,6 +39407,64 @@ var App = function (_React$Component2) {
 			return _react2.default.createElement(
 				'div',
 				null,
+				_react2.default.createElement(
+					'div',
+					{ className: 'socialMedia' },
+					_react2.default.createElement(
+						'div',
+						{ className: 'wrapper' },
+						_react2.default.createElement(
+							'a',
+							{ href: 'https://twitter.com/nickevansmedia', target: '_blank' },
+							_react2.default.createElement('i', { className: 'fa fa-twitter', 'aria-hidden': 'true' })
+						),
+						_react2.default.createElement(
+							'a',
+							{ href: 'https://github.com/nicke920/react-sportsApp', target: '_blank' },
+							_react2.default.createElement('i', { className: 'fa fa-github', 'aria-hidden': 'true' })
+						),
+						_react2.default.createElement(
+							'a',
+							{ href: 'https://www.facebook.com/nicklevanscom/', target: '_blank' },
+							_react2.default.createElement('i', { className: 'fa fa-facebook', 'aria-hidden': 'true' })
+						),
+						_react2.default.createElement(
+							'a',
+							{ href: 'https://www.instagram.com/nicke920/', target: '_blank' },
+							_react2.default.createElement('i', { className: 'fa fa-instagram', 'aria-hidden': 'true' })
+						)
+					)
+				),
+				_react2.default.createElement(
+					'nav',
+					null,
+					_react2.default.createElement(
+						'div',
+						{ className: 'wrapper' },
+						_react2.default.createElement(
+							'h2',
+							{ className: 'logo' },
+							_react2.default.createElement(
+								_reactRouter.Link,
+								{ to: '/' },
+								'Trip Planner'
+							)
+						),
+						_react2.default.createElement(
+							'div',
+							{ className: 'accountsContainer' },
+							_react2.default.createElement(
+								'div',
+								{ className: 'accounts' },
+								_react2.default.createElement(
+									_reactRouter.Link,
+									{ to: '/' },
+									'My Account'
+								)
+							)
+						)
+					)
+				),
 				this.props.children || _react2.default.createElement(LogIn, null)
 			);
 		}

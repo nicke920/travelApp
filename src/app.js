@@ -15,21 +15,24 @@ class LogIn extends React.Component {
 			signedUp: '',
 			signUpEmail: '',
 			signUpPassword: '',
-			passwordConfirm: ''
+			passwordConfirm: '',
+			formLogInShow: true
 		}
 
 		this.logIn = this.logIn.bind(this);
 		this.enterPortal = this.enterPortal.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.signUp = this.signUp.bind(this);
+		this.showLogInForm = this.showLogInForm.bind(this);
+		this.showSignUpForm = this.showSignUpForm.bind(this);
 	}
 	componentDidMount() {
 		firebase.auth().onAuthStateChanged((user) => {
-			console.log('user nigga');
 			if (user) {
 				this.setState({
 					loggedIn: true
 				})
+			console.log('user nigga');
 			}
 			else {
 				this.setState({
@@ -76,34 +79,92 @@ class LogIn extends React.Component {
 			alert('sorry bruvvvvv')
 		}
 	}
+	signOut(e) {
+		e.preventDefault();
+		firebase.auth()
+			.signOut();
+		console.log('user just signed out');
+		if (this.state.loggedIn !== null) {
+			this.setState({
+				loggedIn: false
+			})
+		}
+		if (this.state.signedUp !== null) {
+			this.setState({
+				signedUp: false
+			})
+		}
+	}
 	enterPortal() {
 		this.loginPortal.classList.toggle('hide');
 		this.setState({
 			screenActive: false
 		})
 	}
+	showLogInForm() {
+		this.signUpButton.classList.remove('activeButton');
+		this.logInButton.classList.add('activeButton');
+		this.setState({
+			formLogInShow: true
+		})
+	}
+	showSignUpForm() {
+		this.signUpButton.classList.add('activeButton');
+		this.logInButton.classList.remove('activeButton');
+		this.setState({
+			formLogInShow: false
+		})
+		
+	}
 	render() {
+
+		let formToShow = '';
+		if (this.state.formLogInShow === true) {
+			formToShow = (
+			<form className="userLogInForm" onSubmit={this.logIn}>
+				<h2>Log In to your account</h2>
+				<label htmlFor="email">Email</label>
+				<input type="email" placeholder="email" onChange={this.handleChange} name="email"/>
+				<label htmlFor="password">Password</label>
+				<input type="password" placeholder="password" onChange={this.handleChange} name="password"/>
+				<button>Log In</button>
+			</form>
+			)
+		}
+		if (this.state.formLogInShow === false) {
+			formToShow= (
+			<form className="userSignUpForm" onSubmit={this.signUp}>
+				<h2>Sign Up today!</h2>
+				<label htmlFor="email">Email</label>
+				<input type="email" placeholder="email" onChange={this.handleChange} name="signUpEmail"/>
+				<label htmlFor="password">Password</label>
+				<input type="password" placeholder="password" onChange={this.handleChange} name="signUpPassword"/>
+				<label htmlFor="password">Confirm Password</label>
+				<input type="password" placeholder="password" onChange={this.handleChange} name="passwordConfirm"/>
+				<button>Sign Up nigga</button>
+			</form>
+			)
+		}
+
+
+
 		let logInView = '';
 		if (this.state.loggedIn == false || this.state.signedUp == false) {
 			logInView = (
-				<div className="loginPortal" ref={ref => this.loginPortal = ref}>
-					<form onSubmit={this.logIn}>
-						<label htmlFor="email">Email</label>
-						<input type="email" placeholder="email" onChange={this.handleChange} name="email"/>
-						<label htmlFor="password">Password</label>
-						<input type="password" placeholder="password" onChange={this.handleChange} name="password"/>
-							<button>Sign In</button>
-					</form>
-					<form onSubmit={this.signUp}>
-						<label htmlFor="email">Email</label>
-						<input type="email" placeholder="email" onChange={this.handleChange} name="signUpEmail"/>
-						<label htmlFor="password">Password</label>
-						<input type="password" placeholder="password" onChange={this.handleChange} name="signUpPassword"/>
-						<label htmlFor="password">Confirm Password</label>
-						<input type="password" placeholder="password" onChange={this.handleChange} name="passwordConfirm"/>
-						<button>Sign Up nigga</button>
-					</form>
-				</div>
+				<section className="homePage">
+					<div className="loginPortal" ref={ref => this.loginPortal = ref}>
+					<div className="loginType">
+						<button onClick={this.showLogInForm} className="activeButton" ref={ref => this.logInButton = ref}>Log In</button>
+						<button onClick={this.showSignUpForm} ref={ref => this.signUpButton = ref}>Sign Up</button>
+					</div>
+
+						{formToShow}
+						
+					</div>
+					<section className="homeImage">
+						
+					</section>
+				</section>
 				)
 		} 
 		if (this.state.loggedIn == true || this.state.signedUp == true) {
@@ -111,9 +172,12 @@ class LogIn extends React.Component {
 					<div className="loginPortal" ref={ref => this.loginPortal = ref}>
 						<p>You're Logged In Already!</p>
 						<Link to='/home'>Go to home</Link>
+						<button onClick={this.signOut}>Sign out cuzzo</button>
 					</div>
 				)
 		}
+
+
 		return (
 			<div>{logInView}</div>
 		)
@@ -128,6 +192,28 @@ class App extends React.Component {
 		
 		return (
 			<div>
+				
+				<div className="socialMedia">
+					<div className="wrapper">
+						<a href="https://twitter.com/nickevansmedia" target="_blank"><i  className="fa fa-twitter" aria-hidden="true"></i></a>
+						<a href="https://github.com/nicke920/react-sportsApp" target="_blank"><i  className="fa fa-github" aria-hidden="true"></i></a>
+						<a href="https://www.facebook.com/nicklevanscom/" target="_blank"><i  className="fa fa-facebook" aria-hidden="true"></i></a>
+						<a href="https://www.instagram.com/nicke920/" target="_blank"><i  className="fa fa-instagram" aria-hidden="true"></i></a>
+					</div>
+				</div>
+				<nav>
+					<div className="wrapper">
+						<h2 className="logo">
+							<Link to='/'>Trip Planner</Link>
+						</h2>
+						
+						<div className="accountsContainer">
+							<div className="accounts">
+								<Link to='/'>My Account</Link>
+							</div>
+						</div>
+					</div>
+				</nav>
 				{this.props.children || <LogIn />}
 			</div>
 				

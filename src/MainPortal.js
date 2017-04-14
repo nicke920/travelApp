@@ -271,6 +271,7 @@ export default class MainPortal extends React.Component {
 						<div className="tripsHeader">
 							<h2>Trips</h2>
 							<button className="btn" onClick={this.showTravelList}>Add a trip</button>
+							<button to="/">Back to home</button>
 						</div>
 						{this.state.tripsArray.map((trip, i) => {
 							return (
@@ -361,13 +362,7 @@ export default class MainPortal extends React.Component {
 			<div>
 				{tripForm}
 				{expenseForm}
-				<header className="heroImage" ref={ref => this.portalHeader = ref}>
-					<nav className="wrapper">
-						<h2 className="logo">TripPlanner</h2>
-					</nav>
-						{headerDeets}
-
-				</header>
+				
 				<div className="cta" ref={ref => this.ctaBanner = ref}>Hello There! Welcome to the trip planner</div>
 				
 				{theTripPortal}
