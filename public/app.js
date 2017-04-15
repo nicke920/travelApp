@@ -38619,6 +38619,29 @@ var MainPortal = function (_React$Component) {
 	}
 
 	_createClass(MainPortal, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			var _this2 = this;
+
+			firebase.auth().onAuthStateChanged(function (user) {
+				if (user) {
+					firebase.database().ref('users/' + user.uid + '/trips').on('value', function (res) {
+						console.log(res.val());
+						var userData = res.val();
+						var dataArray = [];
+						for (var key in userData) {
+							userData[key].key = key;
+							dataArray.push(userData[key]);
+						}
+						_this2.setState({
+							tripsArray: dataArray
+						});
+						console.log(dataArray);
+					});
+				}
+			});
+		}
+	}, {
 		key: 'onImageDrop',
 		value: function onImageDrop(files) {
 			this.setState({
@@ -38630,7 +38653,7 @@ var MainPortal = function (_React$Component) {
 	}, {
 		key: 'handleImageUpload',
 		value: function handleImageUpload(file) {
-			var _this2 = this;
+			var _this3 = this;
 
 			var upload = _superagent2.default.post(CLOUDINARY_UPLOAD_URL).field('upload_preset', CLOUDINARY_UPLOAD_PRESET).field('file', file);
 			upload.end(function (err, response) {
@@ -38639,7 +38662,7 @@ var MainPortal = function (_React$Component) {
 				}
 
 				if (response.body.secure_url !== '') {
-					_this2.setState({
+					_this3.setState({
 						uploadedFileCloudinaryUrl: response.body.secure_url
 					});
 				}
@@ -38689,7 +38712,7 @@ var MainPortal = function (_React$Component) {
 		key: 'addTrip',
 		value: function addTrip(e) {
 			e.preventDefault();
-			var tripDuplicate = this.state.tripsArray.slice();
+			// const tripDuplicate = this.state.tripsArray.slice();
 			var tripDetails = {
 				tripName: this.state.tripName,
 				tripBudget: this.state.tripBudget,
@@ -38697,28 +38720,29 @@ var MainPortal = function (_React$Component) {
 				tripNotes: this.state.tripNotes,
 				expensesArray: []
 			};
-			tripDuplicate.push(tripDetails);
-			this.setState({
-				tripsArray: tripDuplicate,
-				tripName: '',
-				tripBudget: '',
-				tripCurrency: '',
-				tripNotes: '',
-				tripShow: false
-			});
-			console.log('nicca', this.state.tripsArray);
+			var userID = firebase.auth().currentUser.uid;
+			var dbRef = firebase.database().ref('users/' + userID + '/trips');
+			dbRef.push(tripDetails);
+
+			// tripDuplicate.push(tripDetails);
+			// this.setState({
+			// 	tripsArray: tripDuplicate,
+			// 	tripName: '',
+			// 	tripBudget: '',
+			// 	tripCurrency: '',
+			// 	tripNotes: '',
+			// 	tripShow: false
+			// })
+			// console.log('nicca', this.state.tripsArray)
 		}
 		//to remove a trip from the list
 
 	}, {
 		key: 'removeTrip',
-		value: function removeTrip(i) {
-			var tripDuplicate = this.state.tripsArray.slice();
-			var indexToDelete = i;
-			tripDuplicate.splice(i, 1);
-			this.setState({
-				tripsArray: tripDuplicate
-			});
+		value: function removeTrip(trip, i) {
+			var userID = firebase.auth().currentUser.uid;
+			var dbRef = firebase.database().ref('users/' + userID + '/trips/' + trip.key);
+			dbRef.remove();
 		}
 		//to enter the individual trip
 
@@ -38788,7 +38812,7 @@ var MainPortal = function (_React$Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this3 = this;
+			var _this4 = this;
 
 			//for the user to upload an image
 			var dropZone = '';
@@ -38832,7 +38856,7 @@ var MainPortal = function (_React$Component) {
 			var tripForm = '';
 			if (this.state.tripShow == true) {
 				tripForm = _react2.default.createElement(AddTripForm, { appear: this.showTravelList, handleChange: this.handleChange, add: this.addTrip, thisValue: this.state.value, reference: function reference(ref) {
-						return _this3.showTripForm = ref;
+						return _this4.showTripForm = ref;
 					}, exit: this.exitForm });
 			}
 
@@ -38951,10 +38975,10 @@ var MainPortal = function (_React$Component) {
 									'div',
 									{ className: 'eachAction' },
 									_react2.default.createElement('i', { className: 'fa fa-sign-in', 'aria-hidden': 'true', onClick: function onClick() {
-											return _this3.enterTrip(trip, i);
+											return _this4.enterTrip(trip, i);
 										} }),
 									_react2.default.createElement('i', { className: 'fa fa-trash-o', 'aria-hidden': 'true', onClick: function onClick() {
-											return _this3.removeTrip(i);
+											return _this4.removeTrip(trip, i);
 										} })
 								)
 							);
@@ -39042,7 +39066,7 @@ var MainPortal = function (_React$Component) {
 									'div',
 									{ className: 'eachAction' },
 									_react2.default.createElement('i', { className: 'fa fa-trash-o', 'aria-hidden': 'true', onClick: function onClick() {
-											return _this3.removeExpense(i);
+											return _this4.removeExpense(i);
 										} })
 								)
 							);
@@ -39084,12 +39108,12 @@ var MainPortal = function (_React$Component) {
 				_react2.default.createElement(
 					'header',
 					{ className: 'portalHeader', ref: function ref(_ref2) {
-							return _this3.portalHeader = _ref2;
+							return _this4.portalHeader = _ref2;
 						} },
 					_react2.default.createElement(
 						'div',
 						{ className: 'portalIntro', ref: function ref(_ref) {
-								return _this3.portalIntro = _ref;
+								return _this4.portalIntro = _ref;
 							} },
 						_react2.default.createElement(
 							'h1',

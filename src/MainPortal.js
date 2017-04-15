@@ -65,6 +65,25 @@ export default class MainPortal extends React.Component {
 		this.removeExpense = this.removeExpense.bind(this);
 		this.onImageDrop = this.onImageDrop.bind(this);
 	}
+	componentDidMount() {
+		firebase.auth().onAuthStateChanged((user) => {
+			if (user) {
+				firebase.database().ref(`users/${user.uid}/trips`).on('value', (res) => {
+					console.log(res.val());
+					const userData = res.val();
+					const dataArray = [];
+					for(let key in userData) {
+						userData[key].key = key;
+						dataArray.push(userData[key]);
+					}
+					this.setState({
+						tripsArray: dataArray
+					})
+					console.log(dataArray);
+				})
+			}
+		})
+	}
 	onImageDrop(files) {
 		this.setState({
 			uploadedFile: files[0]
@@ -119,7 +138,7 @@ export default class MainPortal extends React.Component {
 	//to add a trip to the list
 	addTrip(e) {
 		e.preventDefault();
-		const tripDuplicate = this.state.tripsArray.slice();
+		// const tripDuplicate = this.state.tripsArray.slice();
 		const tripDetails = {
 			tripName: this.state.tripName,
 			tripBudget: this.state.tripBudget,
@@ -127,25 +146,29 @@ export default class MainPortal extends React.Component {
 			tripNotes: this.state.tripNotes,
 			expensesArray: []
 		}
-		tripDuplicate.push(tripDetails);
-		this.setState({
-			tripsArray: tripDuplicate,
-			tripName: '',
-			tripBudget: '',
-			tripCurrency: '',
-			tripNotes: '',
-			tripShow: false
-		})
-		console.log('nicca', this.state.tripsArray)
+		const userID = firebase.auth().currentUser.uid;
+		const dbRef = firebase.database().ref(`users/${userID}/trips`);
+		dbRef.push(tripDetails);
+
+
+
+
+		// tripDuplicate.push(tripDetails);
+		// this.setState({
+		// 	tripsArray: tripDuplicate,
+		// 	tripName: '',
+		// 	tripBudget: '',
+		// 	tripCurrency: '',
+		// 	tripNotes: '',
+		// 	tripShow: false
+		// })
+		// console.log('nicca', this.state.tripsArray)
 	}
 	//to remove a trip from the list
-	removeTrip(i) {
-		const tripDuplicate = this.state.tripsArray.slice();
-		const indexToDelete = i;
-		tripDuplicate.splice(i, 1);
-		this.setState({
-			tripsArray: tripDuplicate
-		})
+	removeTrip(trip, i) {
+		const userID = firebase.auth().currentUser.uid;
+		const dbRef = firebase.database().ref(`users/${userID}/trips/${trip.key}`);
+		dbRef.remove();
 	}
 	//to enter the individual trip
 	enterTrip(trip, i) {
@@ -291,7 +314,7 @@ export default class MainPortal extends React.Component {
 									</div>
 									<div className="eachAction">
 										<i className="fa fa-sign-in" aria-hidden="true" onClick={() => this.enterTrip(trip, i)}></i>
-										<i className="fa fa-trash-o" aria-hidden="true" onClick={() => this.removeTrip(i)}></i>
+										<i className="fa fa-trash-o" aria-hidden="true" onClick={() => this.removeTrip(trip, i)}></i>
 									</div>
 								</div>
 							)
