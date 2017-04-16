@@ -20,10 +20,10 @@ const AddTripForm = (props) => {
 			<form className="addTripForm"  onSubmit={props.add} >
 				<i className="fa fa-times-circle" aria-hidden="true" onClick={props.exit}></i>
 				<label htmlFor="">Trip</label>
-				<input type="text" name="tripName" onChange={props.handleChange} placeholder="Trip"/>
+				<input type="text" name="tripName" onChange={props.handleChange} placeholder="ie: 'Vancouver, BC'"/>
 				<label htmlFor="">Budget</label>
-				<input type="number" name="tripBudget" onChange={props.handleChange} placeholder="budget"/>
-				<textarea name="tripNotes" value={props.thisValue} onChange={props.handleChange} cols="20" rows="2"></textarea>
+				<input type="number" name="tripBudget" onChange={props.handleChange} placeholder="Total Budget..."/>
+				<textarea name="tripNotes" value={props.thisValue} onChange={props.handleChange} cols="20" rows="2" placeholder="enter a message..."></textarea>
 				<button>Submit</button>
 			</form>
 		</div>
@@ -44,10 +44,15 @@ export default class MainPortal extends React.Component {
 			tripCurrency: '',
 			tripNotes: '',
 			tripShow: '',
+			tripID: '',
 			expenseShow: '',
 			theTripPortal: true,
 			tripIndex: '',
-			expensesArray: [],
+			expensesArray: [{
+				expenseName: '',
+				expenseAmount: '',
+				expenseType: ''
+			}],
 			expenseName: '',
 			expenseAmount: '',
 			expenseType: 'food',
@@ -66,23 +71,34 @@ export default class MainPortal extends React.Component {
 		this.onImageDrop = this.onImageDrop.bind(this);
 	}
 	componentDidMount() {
+		
+		
 		firebase.auth().onAuthStateChanged((user) => {
 			if (user) {
+				const tripID = this.state.tripID;
+				const userID = firebase.auth().currentUser.uid;
+				const tripIndex = this.state.tripIndex;
+
 				firebase.database().ref(`users/${user.uid}/trips`).on('value', (res) => {
-					console.log(res.val());
+					// console.log(res.val());
 					const userData = res.val();
-					const dataArray = [];
+					const tripsArray = [];
 					for(let key in userData) {
 						userData[key].key = key;
-						dataArray.push(userData[key]);
+						tripsArray.push(userData[key]);
 					}
 					this.setState({
-						tripsArray: dataArray
+						tripsArray: tripsArray
 					})
-					console.log(dataArray);
+					// console.log(dataArray);
 				})
+				
+				
+
+				
 			}
 		})
+		
 	}
 	onImageDrop(files) {
 		this.setState({
@@ -143,26 +159,20 @@ export default class MainPortal extends React.Component {
 			tripName: this.state.tripName,
 			tripBudget: this.state.tripBudget,
 			tripCurrency: this.state.tripCurrency,
-			tripNotes: this.state.tripNotes,
-			expensesArray: []
+			tripNotes: this.state.tripNotes
 		}
 		const userID = firebase.auth().currentUser.uid;
 		const dbRef = firebase.database().ref(`users/${userID}/trips`);
 		dbRef.push(tripDetails);
 
 
+		this.setState({
+			tripShow: false,
+			tripName: '',
+			tripBudget: '',
+			tripNotes: ''
+		})
 
-
-		// tripDuplicate.push(tripDetails);
-		// this.setState({
-		// 	tripsArray: tripDuplicate,
-		// 	tripName: '',
-		// 	tripBudget: '',
-		// 	tripCurrency: '',
-		// 	tripNotes: '',
-		// 	tripShow: false
-		// })
-		// console.log('nicca', this.state.tripsArray)
 	}
 	//to remove a trip from the list
 	removeTrip(trip, i) {
@@ -173,13 +183,65 @@ export default class MainPortal extends React.Component {
 	//to enter the individual trip
 	enterTrip(trip, i) {
 		const trippy = this.state.tripsArray[i];
-		console.log('wheoooooo', trippy);
 		this.portalHeader.classList.toggle('portalHeaderSmaller');
 		this.portalIntro.classList.toggle('hide');
 		this.setState({
 			theTripPortal: false,
-			tripIndex: i
+			tripIndex: i,
+			tripID: trip.key
 		})
+	}
+	addAnExpense(e) {
+		e.preventDefault();
+		
+		const expenseDetails = {
+			expenseName: this.state.expenseName,
+			expenseAmount: this.state.expenseAmount,
+			expenseType: this.state.expenseType
+		}
+		const tripID = this.state.tripID;
+		const userID = firebase.auth().currentUser.uid;
+
+
+		firebase.database().ref(`users/${userID}/trips/${tripID}/expenses`).on('value', (res) => {
+			const tripIndex = this.state.tripIndex;
+			const userData = res.val();
+			const expenseArray = [];
+			const tripDuplicate = this.state.tripsArray.slice();
+			const individualTrip = tripDuplicate[tripIndex];
+			individualTrip['testExpenseArray'] = expenseArray;
+			for(let key in userData) {
+				userData[key].key = key;
+				expenseArray.push(userData[key]);
+			}
+			console.log('helpppp', tripDuplicate)
+			this.setState({
+				tripsArray: tripDuplicate
+			})
+			
+			// console.log(dataArray);
+		})
+
+		const dbRef = firebase.database().ref(`users/${userID}/trips/${tripID}/expenses`);
+		dbRef.push(expenseDetails);
+
+		this.setState({
+			expenseShow: false
+		})
+		
+
+
+
+		// const tripsArrayDuplicate = this.state.tripsArray.slice();
+		// tripsArrayDuplicate[tripIndex].expensesArray.push(expenseDetails)
+		// tripsArrayDuplicate[tripIndex].tripBudgetLeft = tripsArrayDuplicate[tripIndex].tripBudget - this.state.expenseAmount;
+		// this.setState({
+		// 	tripsArray: tripsArrayDuplicate,
+		// 	expenseShow: false,
+		// 	expenseName: '',
+		// 	expenseAmount: '',
+		// 	expenseType: 'food'
+		// })
 	}
 	//to show the add an expense form
 	showExpenseForm() {
@@ -194,27 +256,7 @@ export default class MainPortal extends React.Component {
 			expenseShow: false
 		})
 	}
-	addAnExpense(e) {
-		e.preventDefault();
-		const tripIndex = this.state.tripIndex;
-		const expenseDetails = {
-			expenseName: this.state.expenseName,
-			expenseAmount: this.state.expenseAmount,
-			expenseType: this.state.expenseType
-		}
-		const tripsArrayDuplicate = this.state.tripsArray.slice();
-		tripsArrayDuplicate[tripIndex].expensesArray.push(expenseDetails)
-		tripsArrayDuplicate[tripIndex].tripBudgetLeft = tripsArrayDuplicate[tripIndex].tripBudget - this.state.expenseAmount;
-		this.setState({
-			tripsArray: tripsArrayDuplicate,
-			expenseShow: false,
-			expenseName: '',
-			expenseAmount: '',
-			expenseType: 'food'
-		})
-		
-
-	}
+	
 	removeExpense(i) {
 		const tripIndex = this.state.tripIndex;
 		const expensesArrayDuplicate = this.state.tripsArray.slice();
@@ -306,11 +348,14 @@ export default class MainPortal extends React.Component {
 							return (
 								<div className="tripList">
 									<div className="eachTrip">
-										<h3>{trip.tripName}</h3>
-										<p>{trip.tripCurrency}</p>
-										<p>{trip.tripBudget}</p>
-										<p>{trip.tripBudgetLeft}</p>
-										<p className="notes">{trip.tripNotes}</p>
+										<div className="eachTitle">
+											<h3>{trip.tripName}</h3>
+											<p>20000</p>
+											<p>20000</p>
+										</div>
+										<div className="eachNotes">
+											<p>{trip.tripNotes}</p>
+										</div>
 									</div>
 									<div className="eachAction">
 										<i className="fa fa-sign-in" aria-hidden="true" onClick={() => this.enterTrip(trip, i)}></i>
@@ -332,49 +377,51 @@ export default class MainPortal extends React.Component {
 				<section className="tripsSection wrapper">
 				<aside>
 					{dropZone}
-					<p>Total Budget: {this.state.tripsArray[this.state.tripIndex].tripBudget}</p>
-					<p>Remaining Budget: {this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</p>
-					<p>Trip Notes: {this.state.tripsArray[this.state.tripIndex].tripNotes}</p>
+					<p><span className="text-bold">Total Budget:</span> ${this.state.tripsArray[this.state.tripIndex].tripBudget}</p>
+					<p><span className="text-bold">Remaining Budget:</span> ${this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</p>
+					<p><span className="text-bold">Trip Notes:</span> {this.state.tripsArray[this.state.tripIndex].tripNotes}</p>
 				</aside>
-				<article>
+				<article className="innerPortalMain">
 					<div className="tripsHeader">
 						<i className="fa fa-arrow-circle-o-left" aria-hidden="true" onClick={this.goBack}></i>
 						<h2>Expenses</h2>
 						<i className="fa fa-plus-circle" aria-hidden="true" onClick={this.showExpenseForm}></i>
 					</div>
-						{this.state.tripsArray[this.state.tripIndex].expensesArray.map((expense, i) => {
-							let typeOfIcon = '';
-							if (expense.expenseType === 'accommodation') {
-								typeOfIcon = (
-										<img src="../assets/img/rentIcon.svg" alt="" className="expenseIcon"/>
-									)
-							}
-							if (expense.expenseType === 'food') {
-								typeOfIcon = (
-										<img src="../assets/img/foodIcon.svg" alt="" className="expenseIcon"/>
-									)
-							}
-							if (expense.expenseType === 'fun') {
-								typeOfIcon = (
-										<img src="../assets/img/funIcon.svg" alt="" className="expenseIcon"/>
-									)
-							}
-						return (
-							<div className="tripList">
-								<div className="expenseTypeDiv">
-									{typeOfIcon}
-								</div>
-								<div className="eachTrip">
-									<h3>{expense.expenseName}</h3>
-									<p>{expense.expenseAmount}</p>
-								</div>
-								<div className="eachAction">
-									<i className="fa fa-trash-o" aria-hidden="true" onClick={() => this.removeExpense(i)}></i>
-								</div>
-							</div>
-						)
-
-					})}
+						{
+							// console.log('neww', this.state.tripsArray[this.state.tripIndex])
+							// this.state.tripsArray[this.state.tripIndex].testExpenseArray.map((expense, i) => {
+							// let typeOfIcon = '';
+							// if (expense.expenseType === 'accommodation') {
+							// 	typeOfIcon = (
+							// 			<img src="../assets/img/rentIcon.svg" alt="" className="expenseIcon"/>
+							// 		)
+							// }
+							// if (expense.expenseType === 'food') {
+							// 	typeOfIcon = (
+							// 			<img src="../assets/img/foodIcon.svg" alt="" className="expenseIcon"/>
+							// 		)
+							// }
+							// if (expense.expenseType === 'fun') {
+							// 	typeOfIcon = (
+							// 			<img src="../assets/img/funIcon.svg" alt="" className="expenseIcon"/>
+							// 		)
+							// }
+							// return (
+							// 	<div className="tripList">
+							// 		<div className="expenseTypeDiv">
+							// 			{typeOfIcon}
+							// 		</div>
+							// 		<div className="eachTrip">
+							// 			<h3>{expense.expenseName}</h3>
+							// 			<p>{expense.expenseAmount}</p>
+							// 		</div>
+							// 		<div className="eachAction">
+							// 			<i className="fa fa-trash-o" aria-hidden="true" onClick={() => this.removeExpense(i)}></i>
+							// 		</div>
+							// 	</div>
+							// )
+							// })
+						}
 				</article>
 				</section>
 			)

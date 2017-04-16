@@ -38559,14 +38559,14 @@ var AddTripForm = function AddTripForm(props) {
 				{ htmlFor: '' },
 				'Trip'
 			),
-			_react2.default.createElement('input', { type: 'text', name: 'tripName', onChange: props.handleChange, placeholder: 'Trip' }),
+			_react2.default.createElement('input', { type: 'text', name: 'tripName', onChange: props.handleChange, placeholder: 'ie: \'Vancouver, BC\'' }),
 			_react2.default.createElement(
 				'label',
 				{ htmlFor: '' },
 				'Budget'
 			),
-			_react2.default.createElement('input', { type: 'number', name: 'tripBudget', onChange: props.handleChange, placeholder: 'budget' }),
-			_react2.default.createElement('textarea', { name: 'tripNotes', value: props.thisValue, onChange: props.handleChange, cols: '20', rows: '2' }),
+			_react2.default.createElement('input', { type: 'number', name: 'tripBudget', onChange: props.handleChange, placeholder: 'Total Budget...' }),
+			_react2.default.createElement('textarea', { name: 'tripNotes', value: props.thisValue, onChange: props.handleChange, cols: '20', rows: '2', placeholder: 'enter a message...' }),
 			_react2.default.createElement(
 				'button',
 				null,
@@ -38595,10 +38595,15 @@ var MainPortal = function (_React$Component) {
 			tripCurrency: '',
 			tripNotes: '',
 			tripShow: '',
+			tripID: '',
 			expenseShow: '',
 			theTripPortal: true,
 			tripIndex: '',
-			expensesArray: [],
+			expensesArray: [{
+				expenseName: '',
+				expenseAmount: '',
+				expenseType: ''
+			}],
 			expenseName: '',
 			expenseAmount: '',
 			expenseType: 'food',
@@ -38625,18 +38630,22 @@ var MainPortal = function (_React$Component) {
 
 			firebase.auth().onAuthStateChanged(function (user) {
 				if (user) {
+					var tripID = _this2.state.tripID;
+					var userID = firebase.auth().currentUser.uid;
+					var tripIndex = _this2.state.tripIndex;
+
 					firebase.database().ref('users/' + user.uid + '/trips').on('value', function (res) {
-						console.log(res.val());
+						// console.log(res.val());
 						var userData = res.val();
-						var dataArray = [];
+						var tripsArray = [];
 						for (var key in userData) {
 							userData[key].key = key;
-							dataArray.push(userData[key]);
+							tripsArray.push(userData[key]);
 						}
 						_this2.setState({
-							tripsArray: dataArray
+							tripsArray: tripsArray
 						});
-						console.log(dataArray);
+						// console.log(dataArray);
 					});
 				}
 			});
@@ -38717,23 +38726,18 @@ var MainPortal = function (_React$Component) {
 				tripName: this.state.tripName,
 				tripBudget: this.state.tripBudget,
 				tripCurrency: this.state.tripCurrency,
-				tripNotes: this.state.tripNotes,
-				expensesArray: []
+				tripNotes: this.state.tripNotes
 			};
 			var userID = firebase.auth().currentUser.uid;
 			var dbRef = firebase.database().ref('users/' + userID + '/trips');
 			dbRef.push(tripDetails);
 
-			// tripDuplicate.push(tripDetails);
-			// this.setState({
-			// 	tripsArray: tripDuplicate,
-			// 	tripName: '',
-			// 	tripBudget: '',
-			// 	tripCurrency: '',
-			// 	tripNotes: '',
-			// 	tripShow: false
-			// })
-			// console.log('nicca', this.state.tripsArray)
+			this.setState({
+				tripShow: false,
+				tripName: '',
+				tripBudget: '',
+				tripNotes: ''
+			});
 		}
 		//to remove a trip from the list
 
@@ -38750,13 +38754,65 @@ var MainPortal = function (_React$Component) {
 		key: 'enterTrip',
 		value: function enterTrip(trip, i) {
 			var trippy = this.state.tripsArray[i];
-			console.log('wheoooooo', trippy);
 			this.portalHeader.classList.toggle('portalHeaderSmaller');
 			this.portalIntro.classList.toggle('hide');
 			this.setState({
 				theTripPortal: false,
-				tripIndex: i
+				tripIndex: i,
+				tripID: trip.key
 			});
+		}
+	}, {
+		key: 'addAnExpense',
+		value: function addAnExpense(e) {
+			var _this4 = this;
+
+			e.preventDefault();
+
+			var expenseDetails = {
+				expenseName: this.state.expenseName,
+				expenseAmount: this.state.expenseAmount,
+				expenseType: this.state.expenseType
+			};
+			var tripID = this.state.tripID;
+			var userID = firebase.auth().currentUser.uid;
+
+			firebase.database().ref('users/' + userID + '/trips/' + tripID + '/expenses').on('value', function (res) {
+				var tripIndex = _this4.state.tripIndex;
+				var userData = res.val();
+				var expenseArray = [];
+				var tripDuplicate = _this4.state.tripsArray.slice();
+				var individualTrip = tripDuplicate[tripIndex];
+				individualTrip['testExpenseArray'] = expenseArray;
+				for (var key in userData) {
+					userData[key].key = key;
+					expenseArray.push(userData[key]);
+				}
+				console.log('helpppp', tripDuplicate);
+				_this4.setState({
+					tripsArray: tripDuplicate
+				});
+
+				// console.log(dataArray);
+			});
+
+			var dbRef = firebase.database().ref('users/' + userID + '/trips/' + tripID + '/expenses');
+			dbRef.push(expenseDetails);
+
+			this.setState({
+				expenseShow: false
+			});
+
+			// const tripsArrayDuplicate = this.state.tripsArray.slice();
+			// tripsArrayDuplicate[tripIndex].expensesArray.push(expenseDetails)
+			// tripsArrayDuplicate[tripIndex].tripBudgetLeft = tripsArrayDuplicate[tripIndex].tripBudget - this.state.expenseAmount;
+			// this.setState({
+			// 	tripsArray: tripsArrayDuplicate,
+			// 	expenseShow: false,
+			// 	expenseName: '',
+			// 	expenseAmount: '',
+			// 	expenseType: 'food'
+			// })
 		}
 		//to show the add an expense form
 
@@ -38778,27 +38834,6 @@ var MainPortal = function (_React$Component) {
 			});
 		}
 	}, {
-		key: 'addAnExpense',
-		value: function addAnExpense(e) {
-			e.preventDefault();
-			var tripIndex = this.state.tripIndex;
-			var expenseDetails = {
-				expenseName: this.state.expenseName,
-				expenseAmount: this.state.expenseAmount,
-				expenseType: this.state.expenseType
-			};
-			var tripsArrayDuplicate = this.state.tripsArray.slice();
-			tripsArrayDuplicate[tripIndex].expensesArray.push(expenseDetails);
-			tripsArrayDuplicate[tripIndex].tripBudgetLeft = tripsArrayDuplicate[tripIndex].tripBudget - this.state.expenseAmount;
-			this.setState({
-				tripsArray: tripsArrayDuplicate,
-				expenseShow: false,
-				expenseName: '',
-				expenseAmount: '',
-				expenseType: 'food'
-			});
-		}
-	}, {
 		key: 'removeExpense',
 		value: function removeExpense(i) {
 			var tripIndex = this.state.tripIndex;
@@ -38812,7 +38847,7 @@ var MainPortal = function (_React$Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this4 = this;
+			var _this5 = this;
 
 			//for the user to upload an image
 			var dropZone = '';
@@ -38856,7 +38891,7 @@ var MainPortal = function (_React$Component) {
 			var tripForm = '';
 			if (this.state.tripShow == true) {
 				tripForm = _react2.default.createElement(AddTripForm, { appear: this.showTravelList, handleChange: this.handleChange, add: this.addTrip, thisValue: this.state.value, reference: function reference(ref) {
-						return _this4.showTripForm = ref;
+						return _this5.showTripForm = ref;
 					}, exit: this.exitForm });
 			}
 
@@ -38946,39 +38981,42 @@ var MainPortal = function (_React$Component) {
 									'div',
 									{ className: 'eachTrip' },
 									_react2.default.createElement(
-										'h3',
-										null,
-										trip.tripName
+										'div',
+										{ className: 'eachTitle' },
+										_react2.default.createElement(
+											'h3',
+											null,
+											trip.tripName
+										),
+										_react2.default.createElement(
+											'p',
+											null,
+											'20000'
+										),
+										_react2.default.createElement(
+											'p',
+											null,
+											'20000'
+										)
 									),
 									_react2.default.createElement(
-										'p',
-										null,
-										trip.tripCurrency
-									),
-									_react2.default.createElement(
-										'p',
-										null,
-										trip.tripBudget
-									),
-									_react2.default.createElement(
-										'p',
-										null,
-										trip.tripBudgetLeft
-									),
-									_react2.default.createElement(
-										'p',
-										{ className: 'notes' },
-										trip.tripNotes
+										'div',
+										{ className: 'eachNotes' },
+										_react2.default.createElement(
+											'p',
+											null,
+											trip.tripNotes
+										)
 									)
 								),
 								_react2.default.createElement(
 									'div',
 									{ className: 'eachAction' },
 									_react2.default.createElement('i', { className: 'fa fa-sign-in', 'aria-hidden': 'true', onClick: function onClick() {
-											return _this4.enterTrip(trip, i);
+											return _this5.enterTrip(trip, i);
 										} }),
 									_react2.default.createElement('i', { className: 'fa fa-trash-o', 'aria-hidden': 'true', onClick: function onClick() {
-											return _this4.removeTrip(trip, i);
+											return _this5.removeTrip(trip, i);
 										} })
 								)
 							);
@@ -38999,25 +39037,40 @@ var MainPortal = function (_React$Component) {
 						_react2.default.createElement(
 							'p',
 							null,
-							'Total Budget: ',
+							_react2.default.createElement(
+								'span',
+								{ className: 'text-bold' },
+								'Total Budget:'
+							),
+							' $',
 							this.state.tripsArray[this.state.tripIndex].tripBudget
 						),
 						_react2.default.createElement(
 							'p',
 							null,
-							'Remaining Budget: ',
+							_react2.default.createElement(
+								'span',
+								{ className: 'text-bold' },
+								'Remaining Budget:'
+							),
+							' $',
 							this.state.tripsArray[this.state.tripIndex].tripBudgetLeft
 						),
 						_react2.default.createElement(
 							'p',
 							null,
-							'Trip Notes: ',
+							_react2.default.createElement(
+								'span',
+								{ className: 'text-bold' },
+								'Trip Notes:'
+							),
+							' ',
 							this.state.tripsArray[this.state.tripIndex].tripNotes
 						)
 					),
 					_react2.default.createElement(
 						'article',
-						null,
+						{ className: 'innerPortalMain' },
 						_react2.default.createElement(
 							'div',
 							{ className: 'tripsHeader' },
@@ -39028,49 +39081,7 @@ var MainPortal = function (_React$Component) {
 								'Expenses'
 							),
 							_react2.default.createElement('i', { className: 'fa fa-plus-circle', 'aria-hidden': 'true', onClick: this.showExpenseForm })
-						),
-						this.state.tripsArray[this.state.tripIndex].expensesArray.map(function (expense, i) {
-							var typeOfIcon = '';
-							if (expense.expenseType === 'accommodation') {
-								typeOfIcon = _react2.default.createElement('img', { src: '../assets/img/rentIcon.svg', alt: '', className: 'expenseIcon' });
-							}
-							if (expense.expenseType === 'food') {
-								typeOfIcon = _react2.default.createElement('img', { src: '../assets/img/foodIcon.svg', alt: '', className: 'expenseIcon' });
-							}
-							if (expense.expenseType === 'fun') {
-								typeOfIcon = _react2.default.createElement('img', { src: '../assets/img/funIcon.svg', alt: '', className: 'expenseIcon' });
-							}
-							return _react2.default.createElement(
-								'div',
-								{ className: 'tripList' },
-								_react2.default.createElement(
-									'div',
-									{ className: 'expenseTypeDiv' },
-									typeOfIcon
-								),
-								_react2.default.createElement(
-									'div',
-									{ className: 'eachTrip' },
-									_react2.default.createElement(
-										'h3',
-										null,
-										expense.expenseName
-									),
-									_react2.default.createElement(
-										'p',
-										null,
-										expense.expenseAmount
-									)
-								),
-								_react2.default.createElement(
-									'div',
-									{ className: 'eachAction' },
-									_react2.default.createElement('i', { className: 'fa fa-trash-o', 'aria-hidden': 'true', onClick: function onClick() {
-											return _this4.removeExpense(i);
-										} })
-								)
-							);
-						})
+						)
 					)
 				);
 			}
@@ -39108,12 +39119,12 @@ var MainPortal = function (_React$Component) {
 				_react2.default.createElement(
 					'header',
 					{ className: 'portalHeader', ref: function ref(_ref2) {
-							return _this4.portalHeader = _ref2;
+							return _this5.portalHeader = _ref2;
 						} },
 					_react2.default.createElement(
 						'div',
 						{ className: 'portalIntro', ref: function ref(_ref) {
-								return _this4.portalIntro = _ref;
+								return _this5.portalIntro = _ref;
 							} },
 						_react2.default.createElement(
 							'h1',
