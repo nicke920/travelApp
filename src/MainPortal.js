@@ -1,5 +1,4 @@
 import React from 'react';
-import { ajax } from 'jquery';
 import Dropzone from 'react-dropzone';
 import request from 'superagent';
 
@@ -82,17 +81,25 @@ export default class MainPortal extends React.Component {
 				firebase.database().ref(`users/${user.uid}/trips`).on('value', (res) => {
 					// console.log(res.val());
 					const userData = res.val();
-					const tripsArray = [];
+					let tripsArray = [];
 					for(let key in userData) {
 						userData[key].key = key;
 						tripsArray.push(userData[key]);
 					}
+					tripsArray = tripsArray.map((trip) => {
+						const expenseArray = [];
+						for(let key in trip.expenses) {
+							trip.expenses[key].key = key;
+							expenseArray.push(trip.expenses[key]);
+						}
+						trip.expenses = expenseArray;
+						return trip
+					})
 					this.setState({
 						tripsArray: tripsArray
 					})
 					// console.log(dataArray);
 				})
-				
 				
 
 				
@@ -202,47 +209,15 @@ export default class MainPortal extends React.Component {
 		const tripID = this.state.tripID;
 		const userID = firebase.auth().currentUser.uid;
 
-
-		firebase.database().ref(`users/${userID}/trips/${tripID}/expenses`).on('value', (res) => {
-			const tripIndex = this.state.tripIndex;
-			const userData = res.val();
-			const expenseArray = [];
-			const tripDuplicate = this.state.tripsArray.slice();
-			const individualTrip = tripDuplicate[tripIndex];
-			individualTrip['testExpenseArray'] = expenseArray;
-			for(let key in userData) {
-				userData[key].key = key;
-				expenseArray.push(userData[key]);
-			}
-			console.log('helpppp', tripDuplicate)
-			this.setState({
-				tripsArray: tripDuplicate
-			})
-			
-			// console.log(dataArray);
-		})
-
 		const dbRef = firebase.database().ref(`users/${userID}/trips/${tripID}/expenses`);
 		dbRef.push(expenseDetails);
 
 		this.setState({
 			expenseShow: false
 		})
-		
-
-
-
-		// const tripsArrayDuplicate = this.state.tripsArray.slice();
-		// tripsArrayDuplicate[tripIndex].expensesArray.push(expenseDetails)
-		// tripsArrayDuplicate[tripIndex].tripBudgetLeft = tripsArrayDuplicate[tripIndex].tripBudget - this.state.expenseAmount;
-		// this.setState({
-		// 	tripsArray: tripsArrayDuplicate,
-		// 	expenseShow: false,
-		// 	expenseName: '',
-		// 	expenseAmount: '',
-		// 	expenseType: 'food'
-		// })
 	}
+
+
 	//to show the add an expense form
 	showExpenseForm() {
 		// console.log('guccii');
@@ -257,14 +232,21 @@ export default class MainPortal extends React.Component {
 		})
 	}
 	
-	removeExpense(i) {
-		const tripIndex = this.state.tripIndex;
-		const expensesArrayDuplicate = this.state.tripsArray.slice();
-		const indexToDelete = i;
-		expensesArrayDuplicate[tripIndex].expensesArray.splice(i, 1);
-		this.setState({
-			tripsArray: expensesArrayDuplicate
-		})
+	removeExpense(expense, i) {
+		console.log('trip', expense);
+		console.log('i', i);
+		const tripID = this.state.tripID;
+		const userID = firebase.auth().currentUser.uid;
+		const dbRef = firebase.database().ref(`users/${userID}/trips/${tripID}/expenses/${expense.key}`);
+		dbRef.remove();
+
+		// const tripIndex = this.state.tripIndex;
+		// const tripDuplicate = this.state.tripsArray.slice();
+		// const indexToDelete = i;
+		// tripDuplicate[tripIndex].expenses.splice(i, 1);
+		// this.setState({
+		// 	tripsArray: tripDuplicate
+		// })
 	}
 	render() {
 		//for the user to upload an image
@@ -374,7 +356,7 @@ export default class MainPortal extends React.Component {
 		//individual trip portal
 		if (this.state.theTripPortal == false) {
 			theTripPortal = (
-				<section className="tripsSection wrapper">
+				<section className="tripsSection expenseArea wrapper">
 				<aside>
 					{dropZone}
 					<p><span className="text-bold">Total Budget:</span> ${this.state.tripsArray[this.state.tripIndex].tripBudget}</p>
@@ -388,39 +370,38 @@ export default class MainPortal extends React.Component {
 						<i className="fa fa-plus-circle" aria-hidden="true" onClick={this.showExpenseForm}></i>
 					</div>
 						{
-							// console.log('neww', this.state.tripsArray[this.state.tripIndex])
-							// this.state.tripsArray[this.state.tripIndex].testExpenseArray.map((expense, i) => {
-							// let typeOfIcon = '';
-							// if (expense.expenseType === 'accommodation') {
-							// 	typeOfIcon = (
-							// 			<img src="../assets/img/rentIcon.svg" alt="" className="expenseIcon"/>
-							// 		)
-							// }
-							// if (expense.expenseType === 'food') {
-							// 	typeOfIcon = (
-							// 			<img src="../assets/img/foodIcon.svg" alt="" className="expenseIcon"/>
-							// 		)
-							// }
-							// if (expense.expenseType === 'fun') {
-							// 	typeOfIcon = (
-							// 			<img src="../assets/img/funIcon.svg" alt="" className="expenseIcon"/>
-							// 		)
-							// }
-							// return (
-							// 	<div className="tripList">
-							// 		<div className="expenseTypeDiv">
-							// 			{typeOfIcon}
-							// 		</div>
-							// 		<div className="eachTrip">
-							// 			<h3>{expense.expenseName}</h3>
-							// 			<p>{expense.expenseAmount}</p>
-							// 		</div>
-							// 		<div className="eachAction">
-							// 			<i className="fa fa-trash-o" aria-hidden="true" onClick={() => this.removeExpense(i)}></i>
-							// 		</div>
-							// 	</div>
-							// )
-							// })
+							this.state.tripsArray[this.state.tripIndex].expenses.map((expense, i) => {
+							let typeOfIcon = '';
+							if (expense.expenseType === 'accommodation') {
+								typeOfIcon = (
+										<img src="../assets/img/rentIcon.svg" alt="" className="expenseIcon"/>
+									)
+							}
+							if (expense.expenseType === 'food') {
+								typeOfIcon = (
+										<img src="../assets/img/foodIcon.svg" alt="" className="expenseIcon"/>
+									)
+							}
+							if (expense.expenseType === 'fun') {
+								typeOfIcon = (
+										<img src="../assets/img/funIcon.svg" alt="" className="expenseIcon"/>
+									)
+							}
+							return (
+								<div className="tripList">
+									<div className="expenseTypeDiv">
+										{typeOfIcon}
+									</div>
+									<div className="eachExpense">
+										<h3>{expense.expenseName}</h3>
+										<p>{expense.expenseAmount}</p>
+									</div>
+									<div className="expenseAction">
+										<i className="fa fa-trash-o" aria-hidden="true" onClick={() => this.removeExpense(expense, i)}></i>
+									</div>
+								</div>
+							)
+							})
 						}
 				</article>
 				</section>

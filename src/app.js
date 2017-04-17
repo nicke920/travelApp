@@ -173,7 +173,7 @@ class LogIn extends React.Component {
 				<section className="homePage">
 					<div className="loginPortal" ref={ref => this.loginPortal = ref}>
 						<div className="alreadyLoggedIn">
-							<h2>You're Logged In Already!</h2>
+							<h2>Status: Logged In</h2>
 							<button><Link to='/home'>Enter Portal</Link></button>
 							<button onClick={this.signOut}>Sign out</button>
 						</div>

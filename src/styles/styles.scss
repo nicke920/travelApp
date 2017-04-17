@@ -26,7 +26,7 @@ section {
 nav {
 	display: flex;
 	background: $primaryPurple;
-	padding: 12px;
+	padding: 20px 0;
 	.wrapper {
 		display: flex;
 		justify-content: space-between;
@@ -40,9 +40,11 @@ nav {
 	display: flex;
 	flex-wrap: wrap;
 	.accounts {
-		padding: 8px;
 		margin: 5px;
-		border: 1px solid white;
+		a {
+			padding: 8px;
+			border: 1px solid white;
+		}
 	}
 }
 .socialMedia {
@@ -67,13 +69,13 @@ nav {
 	background: url('../../assets/img/tripHero.jpg');
 	background-size: cover;
 	background-position: center;
-	height: calc(100vh - 104px);
+	height: calc(100vh - 94px);
 	min-height: 450px;
 	width: 50%;
 }
 
 .loginPortal {
-	height: calc(100vh - 104px);
+	height: calc(100vh - 94px);
 	min-height: 450px;
 	width: 50%;
 	display: flex;
@@ -98,6 +100,11 @@ nav {
 		margin: 10px;
 		a {
 			color: $offWhite;
+			display: block;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
 	}
 }
@@ -245,6 +252,11 @@ article {
 		height: 100%;
 	}
 }
+.eachExpense {
+	display: flex;
+	justify-content: space-between;
+	width: 70%;
+}
 
 
 .tripsContainer {
@@ -300,7 +312,7 @@ article {
 	justify-content: space-between;
 	align-items: baseline;
 }
-.eachAction {
+.eachAction, .expenseAction {
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
@@ -315,6 +327,9 @@ article {
 			transform: scale(1.2);
 		}
 	}
+}
+.expenseAction {
+	width: 10%;
 }
 
 .innerPortalMain {
@@ -396,11 +411,53 @@ form {
 	box-shadow: 0 5px 10px 1px grey;
 }
 
+@media (max-width: 900px) {
+	.homePage {
+		flex-direction: column;
+		.homeImage {
+			display: none;
+		}
+		.loginPortal {
+			background: url('../../assets/img/tripHero.jpg');
+			background-size: cover;
+			background-position: center;
+			height: calc(100vh - 94px);
+			width: 100%;
+			div {
+				background: rgba($offWhite, 0.8);
+				padding: 40px;
+			}
+			.loginType {
+				padding: 0;
+			}
+		}
+	}
+}
+
 @media (max-width: 700px) {
 	.eachAction {
 		.fa {
 			font-size: 30px;
 		}
+	}
+	section {
+		padding: 30px 0;
+	}
+	aside {
+		width: 100%;
+		margin-bottom: 20px;
+		padding-bottom: 20px;
+		border-bottom: 1px solid black;
+		p {
+			text-align: center;
+		}
+	}
+	.expenseArea {
+		flex-direction: column;
+	}
+	.dropZone {
+		max-width: 400px;
+		margin: 0 auto;
 	}
 }
 @media (max-width: 500px) {
@@ -410,4 +467,18 @@ form {
 			width: 100%;
 		}
 	}
+	.loginType {
+		width: 250px;
+		margin: 0 auto 20px;
+	}
+	.homePage .loginPortal div {
+		padding: 20px;
+		h2 {
+			font-size: 20px;
+		}
+	}
+}
+
+@media (max-width: 400px) {
+	
 }
