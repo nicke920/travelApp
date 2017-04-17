@@ -28335,6 +28335,7 @@ var MainPortal = function (_React$Component) {
 			tripsArray: [],
 			tripName: '',
 			tripBudget: '',
+			tripBudgetLeft: '',
 			tripCurrency: '',
 			tripNotes: '',
 			tripShow: '',
@@ -28342,11 +28343,6 @@ var MainPortal = function (_React$Component) {
 			expenseShow: '',
 			theTripPortal: true,
 			tripIndex: '',
-			expensesArray: [{
-				expenseName: '',
-				expenseAmount: '',
-				expenseType: ''
-			}],
 			expenseName: '',
 			expenseAmount: '',
 			expenseType: 'food',
@@ -28392,8 +28388,12 @@ var MainPortal = function (_React$Component) {
 								expenseArray.push(trip.expenses[_key]);
 							}
 							trip.expenses = expenseArray;
+							var left = trip.tripBudget - _this2.state.expenseAmount;
+							trip.tripBudgetLeft = left;
 							return trip;
 						});
+
+						// tripsArray[this.state.tripIndex].tripBudgetLeft = left;
 						_this2.setState({
 							tripsArray: tripsArray
 						});
@@ -28477,7 +28477,7 @@ var MainPortal = function (_React$Component) {
 			var tripDetails = {
 				tripName: this.state.tripName,
 				tripBudget: this.state.tripBudget,
-				tripCurrency: this.state.tripCurrency,
+				tripBudgetLeft: this.state.tripBudget,
 				tripNotes: this.state.tripNotes
 			};
 			var userID = firebase.auth().currentUser.uid;
@@ -28524,15 +28524,16 @@ var MainPortal = function (_React$Component) {
 				expenseAmount: this.state.expenseAmount,
 				expenseType: this.state.expenseType
 			};
+
 			var tripID = this.state.tripID;
 			var userID = firebase.auth().currentUser.uid;
-
-			var dbRef = firebase.database().ref('users/' + userID + '/trips/' + tripID + '/expenses');
-			dbRef.push(expenseDetails);
 
 			this.setState({
 				expenseShow: false
 			});
+
+			var dbRef = firebase.database().ref('users/' + userID + '/trips/' + tripID + '/expenses');
+			dbRef.push(expenseDetails);
 		}
 
 		//to show the add an expense form
@@ -28719,12 +28720,7 @@ var MainPortal = function (_React$Component) {
 										_react2.default.createElement(
 											'p',
 											null,
-											'20000'
-										),
-										_react2.default.createElement(
-											'p',
-											null,
-											'20000'
+											trip.tripBudget
 										)
 									),
 									_react2.default.createElement(

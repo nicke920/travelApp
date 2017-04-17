@@ -40,6 +40,7 @@ export default class MainPortal extends React.Component {
 			tripsArray: [],
 			tripName: '',
 			tripBudget: '',
+			tripBudgetLeft: '',
 			tripCurrency: '',
 			tripNotes: '',
 			tripShow: '',
@@ -47,11 +48,6 @@ export default class MainPortal extends React.Component {
 			expenseShow: '',
 			theTripPortal: true,
 			tripIndex: '',
-			expensesArray: [{
-				expenseName: '',
-				expenseAmount: '',
-				expenseType: ''
-			}],
 			expenseName: '',
 			expenseAmount: '',
 			expenseType: 'food',
@@ -93,8 +89,12 @@ export default class MainPortal extends React.Component {
 							expenseArray.push(trip.expenses[key]);
 						}
 						trip.expenses = expenseArray;
+						const left = trip.tripBudget - this.state.expenseAmount;
+						trip.tripBudgetLeft = left;
 						return trip
-					})
+					}) 
+					
+					// tripsArray[this.state.tripIndex].tripBudgetLeft = left;
 					this.setState({
 						tripsArray: tripsArray
 					})
@@ -165,7 +165,7 @@ export default class MainPortal extends React.Component {
 		const tripDetails = {
 			tripName: this.state.tripName,
 			tripBudget: this.state.tripBudget,
-			tripCurrency: this.state.tripCurrency,
+			tripBudgetLeft: this.state.tripBudget,
 			tripNotes: this.state.tripNotes
 		}
 		const userID = firebase.auth().currentUser.uid;
@@ -206,15 +206,17 @@ export default class MainPortal extends React.Component {
 			expenseAmount: this.state.expenseAmount,
 			expenseType: this.state.expenseType
 		}
+
 		const tripID = this.state.tripID;
 		const userID = firebase.auth().currentUser.uid;
-
-		const dbRef = firebase.database().ref(`users/${userID}/trips/${tripID}/expenses`);
-		dbRef.push(expenseDetails);
-
+		
 		this.setState({
 			expenseShow: false
 		})
+
+		const dbRef = firebase.database().ref(`users/${userID}/trips/${tripID}/expenses`);
+		dbRef.push(expenseDetails);
+		
 	}
 
 
@@ -332,8 +334,7 @@ export default class MainPortal extends React.Component {
 									<div className="eachTrip">
 										<div className="eachTitle">
 											<h3>{trip.tripName}</h3>
-											<p>20000</p>
-											<p>20000</p>
+											<p>{trip.tripBudget}</p>
 										</div>
 										<div className="eachNotes">
 											<p>{trip.tripNotes}</p>
