@@ -89,16 +89,16 @@ export default class MainPortal extends React.Component {
 							expenseArray.push(trip.expenses[key]);
 						}
 						trip.expenses = expenseArray;
-						const left = trip.tripBudget - this.state.expenseAmount;
-						trip.tripBudgetLeft = left;
+						console.log(trip);
+
 						return trip
 					}) 
+
 					
-					// tripsArray[this.state.tripIndex].tripBudgetLeft = left;
 					this.setState({
 						tripsArray: tripsArray
 					})
-					// console.log(dataArray);
+
 				})
 				
 
@@ -161,12 +161,11 @@ export default class MainPortal extends React.Component {
 	//to add a trip to the list
 	addTrip(e) {
 		e.preventDefault();
-		// const tripDuplicate = this.state.tripsArray.slice();
 		const tripDetails = {
 			tripName: this.state.tripName,
 			tripBudget: this.state.tripBudget,
-			tripBudgetLeft: this.state.tripBudget,
-			tripNotes: this.state.tripNotes
+			tripNotes: this.state.tripNotes,
+			tripBudgetLeft: this.state.tripBudget
 		}
 		const userID = firebase.auth().currentUser.uid;
 		const dbRef = firebase.database().ref(`users/${userID}/trips`);
@@ -190,12 +189,15 @@ export default class MainPortal extends React.Component {
 	//to enter the individual trip
 	enterTrip(trip, i) {
 		const trippy = this.state.tripsArray[i];
+		console.log(trip)
 		this.portalHeader.classList.toggle('portalHeaderSmaller');
 		this.portalIntro.classList.toggle('hide');
 		this.setState({
 			theTripPortal: false,
 			tripIndex: i,
-			tripID: trip.key
+			tripID: trip.key,
+			tripBudget: trip.tripBudget,
+			tripBudgetLeft: trip.tripBudgetLeft
 		})
 	}
 	addAnExpense(e) {
@@ -204,18 +206,33 @@ export default class MainPortal extends React.Component {
 		const expenseDetails = {
 			expenseName: this.state.expenseName,
 			expenseAmount: this.state.expenseAmount,
-			expenseType: this.state.expenseType
+			expenseType: this.state.expenseType,
 		}
 
 		const tripID = this.state.tripID;
 		const userID = firebase.auth().currentUser.uid;
+		const tripDuppy = this.state.tripsArray.slice();
 		
-		this.setState({
-			expenseShow: false
-		})
 
 		const dbRef = firebase.database().ref(`users/${userID}/trips/${tripID}/expenses`);
 		dbRef.push(expenseDetails);
+
+
+		const dbRef1 = firebase.database().ref(`users/${userID}/trips/${tripID}/`);
+		const budgetLeft = this.state.tripBudgetLeft - expenseDetails.expenseAmount;
+
+		tripDuppy[this.state.tripIndex].tripBudgetLeft = budgetLeft;
+
+		dbRef1.update({
+			tripBudgetLeft: budgetLeft
+		})
+
+		this.setState({
+			expenseShow: false,
+			tripBudgetLeft: budgetLeft
+		})
+
+		// console.log('tbl', this.state.tripBudgetLeft);
 		
 	}
 
@@ -235,8 +252,6 @@ export default class MainPortal extends React.Component {
 	}
 	
 	removeExpense(expense, i) {
-		console.log('trip', expense);
-		console.log('i', i);
 		const tripID = this.state.tripID;
 		const userID = firebase.auth().currentUser.uid;
 		const dbRef = firebase.database().ref(`users/${userID}/trips/${tripID}/expenses/${expense.key}`);
@@ -334,6 +349,7 @@ export default class MainPortal extends React.Component {
 									<div className="eachTrip">
 										<div className="eachTitle">
 											<h3>{trip.tripName}</h3>
+											<p>{trip.tripBudgetLeft}</p>
 											<p>{trip.tripBudget}</p>
 										</div>
 										<div className="eachNotes">

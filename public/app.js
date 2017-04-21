@@ -28388,16 +28388,14 @@ var MainPortal = function (_React$Component) {
 								expenseArray.push(trip.expenses[_key]);
 							}
 							trip.expenses = expenseArray;
-							var left = trip.tripBudget - _this2.state.expenseAmount;
-							trip.tripBudgetLeft = left;
+							console.log(trip);
+
 							return trip;
 						});
 
-						// tripsArray[this.state.tripIndex].tripBudgetLeft = left;
 						_this2.setState({
 							tripsArray: tripsArray
 						});
-						// console.log(dataArray);
 					});
 				}
 			});
@@ -28473,12 +28471,11 @@ var MainPortal = function (_React$Component) {
 		key: 'addTrip',
 		value: function addTrip(e) {
 			e.preventDefault();
-			// const tripDuplicate = this.state.tripsArray.slice();
 			var tripDetails = {
 				tripName: this.state.tripName,
 				tripBudget: this.state.tripBudget,
-				tripBudgetLeft: this.state.tripBudget,
-				tripNotes: this.state.tripNotes
+				tripNotes: this.state.tripNotes,
+				tripBudgetLeft: this.state.tripBudget
 			};
 			var userID = firebase.auth().currentUser.uid;
 			var dbRef = firebase.database().ref('users/' + userID + '/trips');
@@ -28506,12 +28503,15 @@ var MainPortal = function (_React$Component) {
 		key: 'enterTrip',
 		value: function enterTrip(trip, i) {
 			var trippy = this.state.tripsArray[i];
+			console.log(trip);
 			this.portalHeader.classList.toggle('portalHeaderSmaller');
 			this.portalIntro.classList.toggle('hide');
 			this.setState({
 				theTripPortal: false,
 				tripIndex: i,
-				tripID: trip.key
+				tripID: trip.key,
+				tripBudget: trip.tripBudget,
+				tripBudgetLeft: trip.tripBudgetLeft
 			});
 		}
 	}, {
@@ -28527,13 +28527,26 @@ var MainPortal = function (_React$Component) {
 
 			var tripID = this.state.tripID;
 			var userID = firebase.auth().currentUser.uid;
-
-			this.setState({
-				expenseShow: false
-			});
+			var tripDuppy = this.state.tripsArray.slice();
 
 			var dbRef = firebase.database().ref('users/' + userID + '/trips/' + tripID + '/expenses');
 			dbRef.push(expenseDetails);
+
+			var dbRef1 = firebase.database().ref('users/' + userID + '/trips/' + tripID + '/');
+			var budgetLeft = this.state.tripBudgetLeft - expenseDetails.expenseAmount;
+
+			tripDuppy[this.state.tripIndex].tripBudgetLeft = budgetLeft;
+
+			dbRef1.update({
+				tripBudgetLeft: budgetLeft
+			});
+
+			this.setState({
+				expenseShow: false,
+				tripBudgetLeft: budgetLeft
+			});
+
+			// console.log('tbl', this.state.tripBudgetLeft);
 		}
 
 		//to show the add an expense form
@@ -28558,8 +28571,6 @@ var MainPortal = function (_React$Component) {
 	}, {
 		key: 'removeExpense',
 		value: function removeExpense(expense, i) {
-			console.log('trip', expense);
-			console.log('i', i);
 			var tripID = this.state.tripID;
 			var userID = firebase.auth().currentUser.uid;
 			var dbRef = firebase.database().ref('users/' + userID + '/trips/' + tripID + '/expenses/' + expense.key);
@@ -28716,6 +28727,11 @@ var MainPortal = function (_React$Component) {
 											'h3',
 											null,
 											trip.tripName
+										),
+										_react2.default.createElement(
+											'p',
+											null,
+											trip.tripBudgetLeft
 										),
 										_react2.default.createElement(
 											'p',
