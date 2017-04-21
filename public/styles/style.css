@@ -332,7 +332,7 @@ article {
   width: 80%; }
 
 .expenseTypeDiv {
-  width: 10%;
+  width: 5%;
   display: flex; }
   .expenseTypeDiv img {
     justify-content: flex-start;

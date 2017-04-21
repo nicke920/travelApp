@@ -28731,11 +28731,13 @@ var MainPortal = function (_React$Component) {
 										_react2.default.createElement(
 											'p',
 											null,
+											'Remaining: $',
 											trip.tripBudgetLeft
 										),
 										_react2.default.createElement(
 											'p',
 											null,
+											'Set Budget: $',
 											trip.tripBudget
 										)
 									),
@@ -28852,6 +28854,7 @@ var MainPortal = function (_React$Component) {
 									_react2.default.createElement(
 										'p',
 										null,
+										'$',
 										expense.expenseAmount
 									)
 								),

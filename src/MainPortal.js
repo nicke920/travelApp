@@ -349,8 +349,8 @@ export default class MainPortal extends React.Component {
 									<div className="eachTrip">
 										<div className="eachTitle">
 											<h3>{trip.tripName}</h3>
-											<p>{trip.tripBudgetLeft}</p>
-											<p>{trip.tripBudget}</p>
+											<p>Remaining: ${trip.tripBudgetLeft}</p>
+											<p>Set Budget: ${trip.tripBudget}</p>
 										</div>
 										<div className="eachNotes">
 											<p>{trip.tripNotes}</p>
@@ -411,7 +411,7 @@ export default class MainPortal extends React.Component {
 									</div>
 									<div className="eachExpense">
 										<h3>{expense.expenseName}</h3>
-										<p>{expense.expenseAmount}</p>
+										<p>${expense.expenseAmount}</p>
 									</div>
 									<div className="expenseAction">
 										<i className="fa fa-trash-o" aria-hidden="true" onClick={() => this.removeExpense(expense, i)}></i>
