@@ -235,7 +235,30 @@ export default class MainPortal extends React.Component {
 		// console.log('tbl', this.state.tripBudgetLeft);
 		
 	}
+	removeExpense(expense, i) {
+		console.log('expense', expense);
+		console.log('i', i);
+		const tripID = this.state.tripID;
+		const userID = firebase.auth().currentUser.uid;
+		const tripDuppy = this.state.tripsArray.slice();
 
+		const dbRef = firebase.database().ref(`users/${userID}/trips/${tripID}/expenses/${expense.key}`);
+		dbRef.remove();
+
+		const dbRef1 = firebase.database().ref(`users/${userID}/trips/${tripID}/`);
+		const budgetLeft = this.state.tripBudgetLeft + Number(expense.expenseAmount);
+
+		tripDuppy[this.state.tripIndex].tripBudgetLeft = budgetLeft;
+		
+		dbRef1.update({
+			tripBudgetLeft: budgetLeft
+		})
+
+		this.setState({
+			tripBudgetLeft: budgetLeft
+		})
+
+	}
 
 	//to show the add an expense form
 	showExpenseForm() {
@@ -251,20 +274,7 @@ export default class MainPortal extends React.Component {
 		})
 	}
 	
-	removeExpense(expense, i) {
-		const tripID = this.state.tripID;
-		const userID = firebase.auth().currentUser.uid;
-		const dbRef = firebase.database().ref(`users/${userID}/trips/${tripID}/expenses/${expense.key}`);
-		dbRef.remove();
 
-		// const tripIndex = this.state.tripIndex;
-		// const tripDuplicate = this.state.tripsArray.slice();
-		// const indexToDelete = i;
-		// tripDuplicate[tripIndex].expenses.splice(i, 1);
-		// this.setState({
-		// 	tripsArray: tripDuplicate
-		// })
-	}
 	render() {
 		//for the user to upload an image
 		let dropZone = '';

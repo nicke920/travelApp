@@ -7,6 +7,7 @@ const concat = require('gulp-concat');
 const buffer = require('vinyl-buffer');
 const browserSync = require('browser-sync');
 const reload = browserSync.reload;
+const autoprefixer = require('gulp-autoprefixer');
 const notify = require('gulp-notify');
 const plumber = require('gulp-plumber');
 const historyApiFallback = require('connect-history-api-fallback');
@@ -39,6 +40,7 @@ gulp.task('bs', () => {
 gulp.task("styles", () => {
    return gulp.src("./src/styles/**/*.scss")
    .pipe(sass().on("error",sass.logError))
+   .pipe(autoprefixer('last 5 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1'))
    .pipe(concat("style.css"))
    .pipe(plumber())
    .pipe(gulp.dest("./public/styles"))

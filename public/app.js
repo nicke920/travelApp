@@ -28548,6 +28548,31 @@ var MainPortal = function (_React$Component) {
 
 			// console.log('tbl', this.state.tripBudgetLeft);
 		}
+	}, {
+		key: 'removeExpense',
+		value: function removeExpense(expense, i) {
+			console.log('expense', expense);
+			console.log('i', i);
+			var tripID = this.state.tripID;
+			var userID = firebase.auth().currentUser.uid;
+			var tripDuppy = this.state.tripsArray.slice();
+
+			var dbRef = firebase.database().ref('users/' + userID + '/trips/' + tripID + '/expenses/' + expense.key);
+			dbRef.remove();
+
+			var dbRef1 = firebase.database().ref('users/' + userID + '/trips/' + tripID + '/');
+			var budgetLeft = this.state.tripBudgetLeft + Number(expense.expenseAmount);
+
+			tripDuppy[this.state.tripIndex].tripBudgetLeft = budgetLeft;
+
+			dbRef1.update({
+				tripBudgetLeft: budgetLeft
+			});
+
+			this.setState({
+				tripBudgetLeft: budgetLeft
+			});
+		}
 
 		//to show the add an expense form
 
@@ -28567,22 +28592,6 @@ var MainPortal = function (_React$Component) {
 			this.setState({
 				expenseShow: false
 			});
-		}
-	}, {
-		key: 'removeExpense',
-		value: function removeExpense(expense, i) {
-			var tripID = this.state.tripID;
-			var userID = firebase.auth().currentUser.uid;
-			var dbRef = firebase.database().ref('users/' + userID + '/trips/' + tripID + '/expenses/' + expense.key);
-			dbRef.remove();
-
-			// const tripIndex = this.state.tripIndex;
-			// const tripDuplicate = this.state.tripsArray.slice();
-			// const indexToDelete = i;
-			// tripDuplicate[tripIndex].expenses.splice(i, 1);
-			// this.setState({
-			// 	tripsArray: tripDuplicate
-			// })
 		}
 	}, {
 		key: 'render',
