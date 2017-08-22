@@ -28302,7 +28302,7 @@ var AddTripForm = function AddTripForm(props) {
 				{ htmlFor: '' },
 				'Trip'
 			),
-			_react2.default.createElement('input', { type: 'text', name: 'tripName', onChange: props.handleChange, placeholder: 'ie: \'Vancouver, BC\'' }),
+			_react2.default.createElement('input', { type: 'text', name: 'tripName', onChange: props.handleChange, placeholder: 'ie: \'Vancouver, BC\'', required: true }),
 			_react2.default.createElement(
 				'label',
 				{ htmlFor: '' },
@@ -28543,7 +28543,9 @@ var MainPortal = function (_React$Component) {
 
 			this.setState({
 				expenseShow: false,
-				tripBudgetLeft: budgetLeft
+				tripBudgetLeft: budgetLeft,
+				expenseName: '',
+				expenseAmount: ''
 			});
 
 			// console.log('tbl', this.state.tripBudgetLeft);
@@ -28599,41 +28601,34 @@ var MainPortal = function (_React$Component) {
 			var _this4 = this;
 
 			//for the user to upload an image
-			var dropZone = '';
-			if (this.state.uploadedFileCloudinaryUrl === '') {
-				dropZone = _react2.default.createElement(
-					'div',
-					null,
-					_react2.default.createElement(
-						'p',
-						null,
-						'Click the photo to upload a photo'
-					),
-					_react2.default.createElement(
-						_reactDropzone2.default,
-						{
-							className: 'dropZone',
-							multiple: false,
-							accept: 'image/*',
-							onDrop: this.onImageDrop.bind(this) },
-						_react2.default.createElement('img', { src: '../assets/img/corgi.jpg', alt: '' })
-					)
-				);
-			} else {
-				dropZone = _react2.default.createElement(
-					'div',
-					null,
-					_react2.default.createElement(
-						_reactDropzone2.default,
-						{
-							className: 'dropZone',
-							multiple: false,
-							accept: 'image/*',
-							onDrop: this.onImageDrop.bind(this) },
-						_react2.default.createElement('img', { src: this.state.uploadedFileCloudinaryUrl, alt: '' })
-					)
-				);
-			}
+			// let dropZone = '';
+			// if (this.state.uploadedFileCloudinaryUrl === '') {
+			// 	dropZone = (
+			// 		<div>
+			// 			<p>Click the photo to upload a photo</p>
+			// 			<Dropzone
+			// 				className="dropZone"
+			// 				multiple={false}
+			// 				accept="image/*"
+			// 				onDrop={this.onImageDrop.bind(this)}>
+			// 				<img src="../assets/img/corgi.jpg" alt=""/>
+			// 			</Dropzone>
+			// 		</div>
+			// 	)
+			// } else {
+			// 	dropZone = (
+			// 		<div>
+			// 			<Dropzone
+			// 				className="dropZone"
+			// 				multiple={false}
+			// 				accept="image/*"
+			// 				onDrop={this.onImageDrop.bind(this)}>
+			// 				<img src={this.state.uploadedFileCloudinaryUrl} alt=""/>
+			// 			</Dropzone>
+			// 		</div>
+			// 	)
+			// }
+
 
 			//when user clicks add a trip... on click, it sets tripShow state to true, and when it's true, we show tripForm
 			//ADD A TRIP FORM
@@ -28751,13 +28746,9 @@ var MainPortal = function (_React$Component) {
 										)
 									),
 									_react2.default.createElement(
-										'div',
+										'p',
 										{ className: 'eachNotes' },
-										_react2.default.createElement(
-											'p',
-											null,
-											trip.tripNotes
-										)
+										trip.tripNotes
 									)
 								),
 								_react2.default.createElement(
@@ -28784,7 +28775,11 @@ var MainPortal = function (_React$Component) {
 					_react2.default.createElement(
 						'aside',
 						null,
-						dropZone,
+						_react2.default.createElement(
+							'h2',
+							null,
+							'Trip Details'
+						),
 						_react2.default.createElement(
 							'p',
 							null,
@@ -28888,19 +28883,23 @@ var MainPortal = function (_React$Component) {
 					{ className: 'headerBottom wrapper' },
 					_react2.default.createElement(
 						'h3',
-						null,
+						{ className: 'trip-name' },
 						this.state.tripsArray[this.state.tripIndex].tripName
 					),
 					_react2.default.createElement(
 						'h3',
-						null,
+						{ className: 'trip-budget' },
 						_react2.default.createElement(
 							'p',
 							null,
 							'Remaining Budget:'
 						),
 						' ',
-						this.state.tripsArray[this.state.tripIndex].tripBudgetLeft
+						_react2.default.createElement(
+							'span',
+							null,
+							this.state.tripsArray[this.state.tripIndex].tripBudgetLeft
+						)
 					)
 				);
 			}

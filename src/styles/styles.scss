@@ -169,6 +169,7 @@ nav {
 }
 .portalHeaderSmaller {
 	height: 20vh;
+	min-height: 160px;
 }
 .portalIntro {
 	max-width: 500px;
@@ -201,7 +202,7 @@ nav {
 .btn {
 	border: none;
 	border-radius: 3px;
-	height: 30px;
+	height: 44px;
 	width: 150px;
 	background: $accentOrange;
 }
@@ -272,6 +273,7 @@ article {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
+	align-items: center;
 	border-bottom: 1px solid grey;
 	padding-bottom: 20px;
 	.fa {
@@ -284,15 +286,14 @@ article {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	padding: 10px;
+	padding: 20px 16px;
 	margin: 20px 0;
 	&:hover {
-		transform: scale(1.01);
+		box-shadow: 0 0 8px 2px $primaryPurple;
 	}
 }
 .eachTrip {
 	display: flex;
-	flex-wrap: wrap;
 	flex-direction: column;
 	width: 80%;
 	padding-right: 20px;
@@ -300,17 +301,18 @@ article {
 		color: $darkPurple;
 		font-size: 22px;
 		width: 40%;
+		margin-bottom: 5px;
 	}
 	.eachNotes {
-		// overflow: hidden;
-		// padding-right: 20px;
+		overflow-wrap: break-word;
 		margin-top: 10px;
+		color: rgba($primaryPurple, 0.7);
+		font-size: 14px;
 	}
 }
 .eachTitle {
 	display: flex;
 	justify-content: space-between;
-	align-items: baseline;
 }
 .eachAction, .expenseAction {
 	display: flex;
@@ -321,10 +323,10 @@ article {
 		font-size: 40px;
 		color: $darkPurple;
 		cursor: pointer;
-		transition: all 0.6s ease;
+		// transition: all 0.4s ease;
 		margin: 0 5px;
 		&:hover {
-			transform: scale(1.2);
+			transform: scale(1.08);
 		}
 	}
 }
@@ -335,6 +337,37 @@ article {
 .innerPortalMain {
 	width: 100%;
 }
+
+.trip-name {
+	font-size: 50px;
+}
+
+.trip-budget span {
+	color: $accentOrange;
+}
+
+.tripsSection {
+	background: white;
+	min-height: calc(100vh - 170px);
+	box-shadow: 0 0 5px 1px grey;
+	padding: 0;
+	aside h2 {
+		text-align: center;
+		margin-bottom: 20px;
+		font-weight: bold;
+	}
+}
+
+.tripsSection aside {
+	border-right: 2px solid $accentOrange;
+	background:#e6e6e6;
+}
+
+.tripsSection article, 
+.tripsSection aside {
+	padding: 30px 20px;
+}
+
 
 
 
@@ -365,6 +398,7 @@ form {
 	flex-direction: column;
 	align-items: center;
 	padding: 20px;
+	z-index: 99999;
 	input {
 		margin-bottom: 30px;
 		padding: 5px;
@@ -375,8 +409,9 @@ form {
 		background: transparent;
 	}
 	select {
-		width: 70px;
 		margin-bottom: 30px;
+		height: 40px;
+		background: white;
 	}
 	label {
 		text-transform: uppercase;
@@ -447,7 +482,8 @@ form {
 		width: 100%;
 		margin-bottom: 20px;
 		padding-bottom: 20px;
-		border-bottom: 1px solid black;
+		border-bottom: 1px solid $accentOrange;
+		border-right: none!important;
 		p {
 			text-align: center;
 		}
@@ -479,6 +515,17 @@ form {
 	}
 }
 
-@media (max-width: 400px) {
-	
+
+@media screen and (max-width: 1050px) {
+	.expenseTypeDiv {
+		width: 10%;
+		min-width: 28px;
+	}
+}
+
+@media screen and (max-width: 410px) {
+	.addTripForm, 
+	.secondform {
+		width: 100%;
+	}
 }

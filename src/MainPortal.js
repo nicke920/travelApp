@@ -19,7 +19,7 @@ const AddTripForm = (props) => {
 			<form className="addTripForm"  onSubmit={props.add} >
 				<i className="fa fa-times-circle" aria-hidden="true" onClick={props.exit}></i>
 				<label htmlFor="">Trip</label>
-				<input type="text" name="tripName" onChange={props.handleChange} placeholder="ie: 'Vancouver, BC'"/>
+				<input type="text" name="tripName" onChange={props.handleChange} placeholder="ie: 'Vancouver, BC'" required/>
 				<label htmlFor="">Budget</label>
 				<input type="number" name="tripBudget" onChange={props.handleChange} placeholder="Total Budget..."/>
 				<textarea name="tripNotes" value={props.thisValue} onChange={props.handleChange} cols="20" rows="2" placeholder="enter a message..."></textarea>
@@ -229,7 +229,9 @@ export default class MainPortal extends React.Component {
 
 		this.setState({
 			expenseShow: false,
-			tripBudgetLeft: budgetLeft
+			tripBudgetLeft: budgetLeft,
+			expenseName: '',
+			expenseAmount: ''
 		})
 
 		// console.log('tbl', this.state.tripBudgetLeft);
@@ -277,33 +279,33 @@ export default class MainPortal extends React.Component {
 
 	render() {
 		//for the user to upload an image
-		let dropZone = '';
-		if (this.state.uploadedFileCloudinaryUrl === '') {
-			dropZone = (
-				<div>
-					<p>Click the photo to upload a photo</p>
-					<Dropzone
-						className="dropZone"
-						multiple={false}
-						accept="image/*"
-						onDrop={this.onImageDrop.bind(this)}>
-						<img src="../assets/img/corgi.jpg" alt=""/>
-					</Dropzone>
-				</div>
-			)
-		} else {
-			dropZone = (
-				<div>
-					<Dropzone
-						className="dropZone"
-						multiple={false}
-						accept="image/*"
-						onDrop={this.onImageDrop.bind(this)}>
-						<img src={this.state.uploadedFileCloudinaryUrl} alt=""/>
-					</Dropzone>
-				</div>
-			)
-		}
+		// let dropZone = '';
+		// if (this.state.uploadedFileCloudinaryUrl === '') {
+		// 	dropZone = (
+		// 		<div>
+		// 			<p>Click the photo to upload a photo</p>
+		// 			<Dropzone
+		// 				className="dropZone"
+		// 				multiple={false}
+		// 				accept="image/*"
+		// 				onDrop={this.onImageDrop.bind(this)}>
+		// 				<img src="../assets/img/corgi.jpg" alt=""/>
+		// 			</Dropzone>
+		// 		</div>
+		// 	)
+		// } else {
+		// 	dropZone = (
+		// 		<div>
+		// 			<Dropzone
+		// 				className="dropZone"
+		// 				multiple={false}
+		// 				accept="image/*"
+		// 				onDrop={this.onImageDrop.bind(this)}>
+		// 				<img src={this.state.uploadedFileCloudinaryUrl} alt=""/>
+		// 			</Dropzone>
+		// 		</div>
+		// 	)
+		// }
 
 
 
@@ -362,9 +364,9 @@ export default class MainPortal extends React.Component {
 											<p>Remaining: ${trip.tripBudgetLeft}</p>
 											<p>Set Budget: ${trip.tripBudget}</p>
 										</div>
-										<div className="eachNotes">
-											<p>{trip.tripNotes}</p>
-										</div>
+										<p className="eachNotes">
+											{trip.tripNotes}
+										</p>
 									</div>
 									<div className="eachAction">
 										<i className="fa fa-sign-in" aria-hidden="true" onClick={() => this.enterTrip(trip, i)}></i>
@@ -385,7 +387,7 @@ export default class MainPortal extends React.Component {
 			theTripPortal = (
 				<section className="tripsSection expenseArea wrapper">
 				<aside>
-					{dropZone}
+				<h2>Trip Details</h2>
 					<p><span className="text-bold">Total Budget:</span> ${this.state.tripsArray[this.state.tripIndex].tripBudget}</p>
 					<p><span className="text-bold">Remaining Budget:</span> ${this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</p>
 					<p><span className="text-bold">Trip Notes:</span> {this.state.tripsArray[this.state.tripIndex].tripNotes}</p>
@@ -442,8 +444,8 @@ export default class MainPortal extends React.Component {
 		if (this.state.tripsArray[this.state.tripIndex] !== undefined) {
 			headerDeets = (
 				<div className="headerBottom wrapper">
-					<h3>{this.state.tripsArray[this.state.tripIndex].tripName}</h3>
-					<h3><p>Remaining Budget:</p> {this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</h3>
+					<h3 className="trip-name">{this.state.tripsArray[this.state.tripIndex].tripName}</h3>
+					<h3 className="trip-budget"><p>Remaining Budget:</p> <span>{this.state.tripsArray[this.state.tripIndex].tripBudgetLeft}</span></h3>
 				</div>	
 				)
 		}

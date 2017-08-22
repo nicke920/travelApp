@@ -322,7 +322,8 @@ nav {
           align-items: center; }
 
 .portalHeaderSmaller {
-  height: 20vh; }
+  height: 20vh;
+  min-height: 160px; }
 
 .portalIntro {
   max-width: 500px;
@@ -347,7 +348,7 @@ nav {
 .btn {
   border: none;
   border-radius: 3px;
-  height: 30px;
+  height: 44px;
   width: 150px;
   background: #ffc400; }
 
@@ -422,6 +423,9 @@ article {
   -webkit-justify-content: space-between;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
   border-bottom: 1px solid grey;
   padding-bottom: 20px; }
   .tripsHeader .fa {
@@ -439,20 +443,15 @@ article {
   -webkit-justify-content: space-between;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  padding: 10px;
+  padding: 20px 16px;
   margin: 20px 0; }
   .tripList:hover {
-    -webkit-transform: scale(1.01);
-        -ms-transform: scale(1.01);
-            transform: scale(1.01); }
+    box-shadow: 0 0 8px 2px #673ab7; }
 
 .eachTrip {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap;
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
@@ -461,9 +460,13 @@ article {
   .eachTrip h3 {
     color: #512da8;
     font-size: 22px;
-    width: 40%; }
+    width: 40%;
+    margin-bottom: 5px; }
   .eachTrip .eachNotes {
-    margin-top: 10px; }
+    overflow-wrap: break-word;
+    margin-top: 10px;
+    color: rgba(103, 58, 183, 0.7);
+    font-size: 14px; }
 
 .eachTitle {
   display: -webkit-flex;
@@ -471,10 +474,7 @@ article {
   display: flex;
   -webkit-justify-content: space-between;
       -ms-flex-pack: justify;
-          justify-content: space-between;
-  -webkit-align-items: baseline;
-      -ms-flex-align: baseline;
-          align-items: baseline; }
+          justify-content: space-between; }
 
 .eachAction, .expenseAction {
   display: -webkit-flex;
@@ -491,18 +491,41 @@ article {
     font-size: 40px;
     color: #512da8;
     cursor: pointer;
-    transition: all 0.6s ease;
     margin: 0 5px; }
     .eachAction .fa:hover, .expenseAction .fa:hover {
-      -webkit-transform: scale(1.2);
-          -ms-transform: scale(1.2);
-              transform: scale(1.2); }
+      -webkit-transform: scale(1.08);
+          -ms-transform: scale(1.08);
+              transform: scale(1.08); }
 
 .expenseAction {
   width: 10%; }
 
 .innerPortalMain {
   width: 100%; }
+
+.trip-name {
+  font-size: 50px; }
+
+.trip-budget span {
+  color: #ffc400; }
+
+.tripsSection {
+  background: white;
+  min-height: calc(100vh - 170px);
+  box-shadow: 0 0 5px 1px grey;
+  padding: 0; }
+  .tripsSection aside h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold; }
+
+.tripsSection aside {
+  border-right: 2px solid #ffc400;
+  background: #e6e6e6; }
+
+.tripsSection article,
+.tripsSection aside {
+  padding: 30px 20px; }
 
 form {
   width: 400px;
@@ -541,6 +564,7 @@ form {
       -ms-flex-align: center;
           align-items: center;
   padding: 20px;
+  z-index: 99999;
   background: #eee6ff;
   max-width: 500px;
   box-shadow: 0 5px 10px 1px grey; }
@@ -553,8 +577,9 @@ form {
     width: 80%;
     background: transparent; }
   .addTripForm select, .secondform select {
-    width: 70px;
-    margin-bottom: 30px; }
+    margin-bottom: 30px;
+    height: 40px;
+    background: white; }
   .addTripForm label, .secondform label {
     text-transform: uppercase; }
   .addTripForm button, .secondform button {
@@ -609,7 +634,8 @@ form {
     width: 100%;
     margin-bottom: 20px;
     padding-bottom: 20px;
-    border-bottom: 1px solid black; }
+    border-bottom: 1px solid #ffc400;
+    border-right: none !important; }
     aside p {
       text-align: center; }
   .expenseArea {
@@ -634,3 +660,13 @@ form {
     padding: 20px; }
     .homePage .loginPortal div h2 {
       font-size: 20px; } }
+
+@media screen and (max-width: 1050px) {
+  .expenseTypeDiv {
+    width: 10%;
+    min-width: 28px; } }
+
+@media screen and (max-width: 410px) {
+  .addTripForm,
+  .secondform {
+    width: 100%; } }
